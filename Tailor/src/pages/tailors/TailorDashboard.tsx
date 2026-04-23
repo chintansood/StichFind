@@ -1,12 +1,9 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function TailorDashboard() {
-  const navigate = useNavigate();
+  
 
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/");
-  };
+
 
   const quickActions = [
     { icon: "📋", title: "New Orders", desc: "Manage incoming orders", to: "/tailor/TailorDashboard/orders" },

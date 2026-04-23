@@ -236,7 +236,7 @@ const handleSubmit = async () => {
           {/* PROFESSIONAL */}
           {activeTab==="professional" && (
             <div className="space-y-5 max-w-xl">
-              {[["Category *","category",["Men","Women","Both"],true],["Work Type *","workType",["Home","Shop","Both"],true]].map(([label,key,opts,isSelect])=>(
+              {[["Category *","category",["Men","Women","Both"],true],["Work Type *","workType",["Home","Shop","Both"],true]].map(([label,key,opts])=>(
                 <div key={key as string}>
                   <label className={lbl}>{label as string}</label>
                   <div className="relative">
