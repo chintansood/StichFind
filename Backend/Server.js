@@ -3,10 +3,6 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { dbconnect } = require("./Config/DBconfig");
-const userRoutes = require("./Routes/User_routes");
-const tailorRoutes = require("./Routes/tailorRoutes");
-const reviewRoutes = require("./Routes/Review_routes");
-const customerRoutes = require("./Routes/customer_prorotes");
 
 const app = express();
 
@@ -22,10 +18,5 @@ app.get("/", async (req, res) => {
     res.status(500).send("DB ERROR: " + err.message);
   }
 });
-
-app.use("/user", userRoutes);
-app.use("/tailor", tailorRoutes);
-app.use("/review", reviewRoutes);
-app.use("/customer", customerRoutes);
 
 module.exports = app;
