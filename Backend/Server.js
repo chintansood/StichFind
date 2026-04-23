@@ -10,10 +10,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-dbconnect();
-
-app.get("/", (req, res) => {
-  res.send("WORKING");
+app.get("/", async (req, res) => {
+  try {
+    await dbconnect();
+    res.send("WORKING + DB");
+  } catch (err) {
+    console.error("DB root error:", err.message);
+    res.status(500).send("DB ERROR: " + err.message);
+  }
 });
 
 module.exports = app;
