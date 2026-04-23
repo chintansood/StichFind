@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../Middleware/auth");
-const findTailorCtrl = require("../Controller/Controller_FindTailor");
+const reviewCtrl = require("../Controller/Controller_Review");
 
 router.get("/", (req, res) => {
   res.json({ status: true, msg: "tailor route working" });
 });
 
-router.get("/cities", auth, findTailorCtrl.getDistinctCities);
+router.post("/find-by-phone", auth, reviewCtrl.findTailorByPhone);
 
 module.exports = router;
