@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+
 const express = require("express");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
@@ -35,3 +36,4 @@ app.use("/customer", customerRoutes);
 app.listen(3000, () => {
   console.log("🚀 Server running on http://localhost:3000");
 });
+module.exports = app;
