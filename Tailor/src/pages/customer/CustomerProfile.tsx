@@ -1,6 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
-
+import api from "../../api/axios";
 const STATES = [
   "Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh",
   "Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka",
@@ -49,7 +48,7 @@ export default function CustomerProfile() {
   const handleFind = async () => {
     if (!form.email) return alert("Enter email to search");
     try {
-      const res = await axios.post("http://localhost:3000/customer/find", { email: form.email });
+      const res = await api.post("/customer/find", { email: form.email });
       if (res.data.status) {
         const d = res.data.doc;
         setForm({ email: d.email, name: d.name, address: d.address, city: d.city, state: d.state, gender: d.gender });
@@ -66,7 +65,7 @@ export default function CustomerProfile() {
   const handleSave = async () => {
     const err = validate(); if (err) return alert(err);
     try {
-      const res = await axios.post("http://localhost:3000/customer/create", buildFormData());
+      const res = await api.post("/customer/create", buildFormData());
       alert(res.data.msg);
       setIsExisting(true);
     } catch { alert("Error saving profile"); }
@@ -75,7 +74,7 @@ export default function CustomerProfile() {
   const handleUpdate = async () => {
     const err = validate(); if (err) return alert(err);
     try {
-      const res = await axios.post("http://localhost:3000/customer/update", buildFormData());
+      const res = await api.post("/customer/update", buildFormData());
       alert(res.data.msg);
     } catch { alert("Error updating profile"); }
   };
@@ -84,7 +83,7 @@ export default function CustomerProfile() {
     if (!form.email) return alert("Enter email to delete");
     if (!window.confirm("Delete this profile?")) return;
     try {
-      const res = await axios.post("http://localhost:3000/customer/delete", { email: form.email });
+      const res = await api.post("/customer/delete", { email: form.email });
       alert(res.data.msg);
       setForm({ email:"", name:"", address:"", city:"", state:"", gender:"" });
       setProfileImage(null);

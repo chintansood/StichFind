@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api/axios";
 
 const CATEGORIES = ["Men", "Women", "Children"];
 
@@ -68,7 +68,7 @@ export default function FindTailor() {
 useEffect(() => {
   const token = localStorage.getItem("token");
 
-  axios.get("http://localhost:3000/tailor/cities", {
+  api.get("/tailor/cities", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -86,8 +86,8 @@ const handleFind = async (p = 1) => {
   try {
     const token = localStorage.getItem("token");
 
-    const res = await axios.post(
-      "http://localhost:3000/tailor/find",
+    const res = await api.post(
+      "/tailor/find",
       {
         city: selectedCity,
         category: selectedCategory,

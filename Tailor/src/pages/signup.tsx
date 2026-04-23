@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../api/axios";
 import { Link, useNavigate } from "react-router-dom";
 
 interface FormData { name:string; phone:string; emailid:string; pwd:string; userType:"customer"|"tailor"; }
@@ -33,7 +33,7 @@ const Signup = () => {
   if (!validate()) return;
 
   try {
-    const res = await axios.post("http://localhost:3000/user/signup", formData);
+    const res = await api.post("/user/signup", formData);
 
     if (res.data.status) {
       localStorage.setItem("token", res.data.token);

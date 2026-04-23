@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../api/axios";
 
 export default function CustomerDashboard() {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ export default function CustomerDashboard() {
 
   useEffect(() => {
     if (!email) { setLoadingProfile(false); return; }
-    axios.post("http://localhost:3000/customer/find", { email })
+    api.post("/customer/find", { email })
       .then(res => {
         if (res.data.status) {
           setProfile({ name: res.data.doc.name, profilePic: res.data.doc.profilePic });

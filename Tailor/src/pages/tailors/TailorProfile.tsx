@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 
 type Tab = "personal" | "professional" | "contact";
 
@@ -45,8 +45,8 @@ const handleAadhaarImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
   fd.append("aadhaarcard", file);
 
   try {
-    const res = await axios.post(
-      "http://localhost:3000/tailor/aadhaar-ocr",
+    const res = await api.post(
+      "/tailor/aadhaar-ocr",
       fd,
       authConfig
     );
@@ -70,8 +70,8 @@ const handleSearch = async () => {
   if (!searchEmail.trim()) return alert("Enter email to search");
 
   try {
-    const res = await axios.post(
-      "http://localhost:3000/tailor/search",
+    const res = await api.post(
+      "/tailor/search",
       { email: searchEmail },
       authConfig
     );
@@ -135,8 +135,8 @@ const handleSubmit = async () => {
   if (aadhaarFile) fd.append("aadhaarcard", aadhaarFile);
 
   try {
-    const res = await axios.post(
-      "http://localhost:3000/tailor/save-profile",
+    const res = await api.post(
+      "/tailor/save-profile",
       fd,
       authConfig
     );

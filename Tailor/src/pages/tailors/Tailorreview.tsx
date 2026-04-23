@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 
 type Stage = "form" | "success";
 
@@ -20,8 +20,8 @@ const TailorReview = () => {
   try {
     const token = localStorage.getItem("token");
 
-    const res = await axios.post(
-      "http://localhost:3000/review/find-by-phone",
+    const res = await api.post(
+      "/review/find-by-phone",
       { phone: value },
       {
         headers: {
@@ -63,8 +63,8 @@ const handleSubmit = async () => {
   try {
     const token = localStorage.getItem("token");
 
-    const res = await axios.post(
-      "http://localhost:3000/review/add",
+    const res = await api.post(
+      "/review/add",
       {
         phone: form.phone,
         rating: form.rating,

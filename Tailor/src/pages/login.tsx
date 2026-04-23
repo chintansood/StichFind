@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../api/axios";
 import { Link, useNavigate } from "react-router-dom";
 
 interface FormData { emailid: string; pwd: string; }
@@ -29,7 +29,7 @@ const Login = () => {
   const handleLogin = async () => {
     if (!validate()) return;
     try {
-      const res = await axios.post("http://localhost:3000/user/login", formData);
+      const res = await api.post("/user/login", formData);
       if (res.data.status) {
         
         
