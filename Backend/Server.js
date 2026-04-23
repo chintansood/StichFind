@@ -2,26 +2,45 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const fileUpload = require("express-fileupload");
+
 const { dbconnect } = require("./Config/DBconfig");
 const userRoutes = require("./Routes/User_routes");
 const tailorRoutes = require("./Routes/tailorRoutes");
+const reviewRoutes = require("./Routes/Review_routes");
+const customerRoutes = require("./Routes/customer_prorotes");
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://your-frontend.vercel.app"
+  ],
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(fileUpload());
 
-app.get("/", async (req, res) => {
+// ensure DB before handling requests
+app.use(async (req, res, next) => {
   try {
     await dbconnect();
-    res.send("WORKING + DB");
+    next();
   } catch (err) {
-    res.status(500).send("DB ERROR: " + err.message);
+    return res.status(500).json({ msg: "DB connection failed" });
   }
+});
+
+app.get("/", (req, res) => {
+  res.send("Backend running 🚀");
 });
 
 app.use("/user", userRoutes);
 app.use("/tailor", tailorRoutes);
+app.use("/review", reviewRoutes);
+app.use("/customer", customerRoutes);
 
 module.exports = app;
