@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+*/node_modules/
+**/node_modules/
+
+# Environment Variables
+.env
+*/.env
+**/.env
+
+# Config
+Backend/Config/DBconfig.js
+
+dist/
+build/
+*/dist/
+*/build/
+
+
+Backend/uploads/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Vite cache
+.vite/
+**/.vite/
+# Uploaded images
+Backend/Controller/*.png
+Backend/Controller/*.HEIC
+Backend/Controller/*.jpg
+Backend/Controller/*.jpeg
+Backend/uploads/
