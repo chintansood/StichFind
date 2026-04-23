@@ -15,7 +15,8 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://stich-find-dnzk.vercel.app"
+    
+    "https://tailor-nine-henna.vercel.app" 
   ],
   credentials: true
 }));
