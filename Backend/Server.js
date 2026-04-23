@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const { dbconnect } = require("./Config/DBconfig");
 const userRoutes = require("./Routes/User_routes");
+const tailorRoutes = require("./Routes/tailorRoutes");
 
 const app = express();
 
@@ -21,5 +22,6 @@ app.get("/", async (req, res) => {
 });
 
 app.use("/user", userRoutes);
+app.use("/tailor", tailorRoutes);
 
 module.exports = app;
