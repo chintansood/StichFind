@@ -12,6 +12,11 @@ const { dbconnect } = require("./Config/DBconfig");
 
 const app = express();
 
+console.log("ENV CHECK:");
+console.log("MONGO_URI:", process.env.MONGO_URI ? "FOUND" : "MISSING");
+console.log("JWT_SECRET:", process.env.JWT_SECRET ? "FOUND" : "MISSING");
+console.log("EMAIL_USER:", process.env.EMAIL_USER ? "FOUND" : "MISSING");
+
 dbconnect();
 
 app.use(cors());
