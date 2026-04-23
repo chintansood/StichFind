@@ -15,7 +15,7 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://your-frontend.vercel.app"
+    "https://stich-find-dnzk.vercel.app"
   ],
   credentials: true
 }));
@@ -24,18 +24,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(fileUpload());
 
-// ensure DB before handling requests
 app.use(async (req, res, next) => {
   try {
     await dbconnect();
     next();
   } catch (err) {
-    return res.status(500).json({ msg: "DB connection failed" });
+    return res.status(500).json({
+      status: false,
+      msg: "DB connection failed",
+      error: err.message
+    });
   }
 });
 
 app.get("/", (req, res) => {
-  res.send("Backend running 🚀");
+  res.send("Backend running");
 });
 
 app.use("/user", userRoutes);
