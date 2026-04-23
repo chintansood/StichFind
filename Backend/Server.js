@@ -15,7 +15,6 @@ app.get("/", async (req, res) => {
     await dbconnect();
     res.send("WORKING + DB");
   } catch (err) {
-    console.error("DB root error:", err.message);
     res.status(500).send("DB ERROR: " + err.message);
   }
 });
