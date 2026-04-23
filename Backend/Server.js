@@ -15,7 +15,7 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://stichfind.vercel.app/",
+    "https://stichfind.vercel.app",
     
    
   ],
