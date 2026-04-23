@@ -16,8 +16,8 @@ app.use(cors({
   origin: [
     "http://localhost:5173",
     "https://stichfind.vercel.app/",
-    "https://stich-find-dnzk.vercel.app/",
-    "https://tailor-nine-henna.vercel.app" 
+    
+   
   ],
   credentials: true
 }));
