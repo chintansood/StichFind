@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../../api/axios";
+import { DarkToggleNav } from "../../pages/DarkToggleNav";
 
 type Tab = "personal" | "professional" | "contact";
 
@@ -9,26 +10,18 @@ const theme = {
     title: "#2c1e0f", sub: "#a0917e", label: "#6b5a42",
     inputBg: "#fdf8f3", inputText: "#2c1e0f", inputBorder: "#e8e0d5",
     accent: "#8b7355", accentHover: "#6b5a42",
-    tabActive: "#8b7355", tabInactive: "#a0917e",
-    tabActiveBg: "#fdf8f3", tabBorder: "#ede5d8",
-    shopBoxBg: "#fdf8f3", shopBoxBorder: "#e8e0d5",
-    aadhaarBoxBg: "#fdf8f3", aadhaarBoxBorder: "#e8e0d5",
-    profileCircleBorder: "#e8e0d5", profileCircleBg: "#fdf8f3",
-    profilePlaceholder: "#c4b8a8",
-    toggleBg: "#fff", toggleColor: "#3d2e1e", toggleBorder: "#e8e0d5",
+    tabActive: "#8b7355", tabInactive: "#a0917e", tabActiveBg: "#fdf8f3", tabBorder: "#ede5d8",
+    dottedBorder: "#e8e0d5", dottedBg: "#fdf8f3",
+    placeholder: "#c4b8a8",
   },
   dark: {
     pageBg: "#1a1209", cardBg: "#231a0f", cardBorder: "#3d2e1e",
     title: "#fef3e2", sub: "#8b7355", label: "#c4a882",
     inputBg: "#2c1e0f", inputText: "#fef3e2", inputBorder: "#3d2e1e",
     accent: "#c4a882", accentHover: "#d4b892",
-    tabActive: "#c4a882", tabInactive: "#6b5a42",
-    tabActiveBg: "#2c1e0f", tabBorder: "#3d2e1e",
-    shopBoxBg: "#2c1e0f", shopBoxBorder: "#3d2e1e",
-    aadhaarBoxBg: "#2c1e0f", aadhaarBoxBorder: "#3d2e1e",
-    profileCircleBorder: "#3d2e1e", profileCircleBg: "#2c1e0f",
-    profilePlaceholder: "#6b5a42",
-    toggleBg: "#2c1e0f", toggleColor: "#fef3e2", toggleBorder: "#3d2e1e",
+    tabActive: "#c4a882", tabInactive: "#6b5a42", tabActiveBg: "#2c1e0f", tabBorder: "#3d2e1e",
+    dottedBorder: "#3d2e1e", dottedBg: "#2c1e0f",
+    placeholder: "#6b5a42",
   },
 };
 
@@ -57,16 +50,13 @@ const TailorProfile = () => {
   const handleAadhaarImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]; if (!file) return;
     setAadhaarError("");
-    if (!["image/jpeg", "image/png"].includes(file.type)) {
-      setAadhaarError("Only JPG or PNG allowed"); e.target.value = ""; return;
-    }
+    if (!["image/jpeg", "image/png"].includes(file.type)) { setAadhaarError("Only JPG or PNG allowed"); e.target.value = ""; return; }
     setAadhaarFile(file);
     const fd = new FormData(); fd.append("aadhaarcard", file);
     try {
       const res = await api.post("/tailor/aadhaar-ocr", fd, authConfig);
-      if (res.data.status) {
-        setPersonal(p => ({ ...p, aadhaar: res.data.data.aadhaar || "", dob: res.data.data.dob || "", gender: res.data.data.gender || "" }));
-      } else setAadhaarError("Unable to extract Aadhaar details");
+      if (res.data.status) setPersonal(p => ({ ...p, aadhaar: res.data.data.aadhaar || "", dob: res.data.data.dob || "", gender: res.data.data.gender || "" }));
+      else setAadhaarError("Unable to extract Aadhaar details");
     } catch { setAadhaarError("Aadhaar OCR failed"); }
   };
 
@@ -89,9 +79,7 @@ const TailorProfile = () => {
     if (!personal.fullName.trim()) { alert("Full name required"); return false; }
     if (!professional.category) { alert("Category required"); return false; }
     if (!contact.phone || contact.phone.length !== 10) { alert("Valid 10-digit phone required"); return false; }
-    if ((professional.workType === "Shop" || professional.workType === "Both") && (!professional.shopAddress || !professional.shopCity)) {
-      alert("Shop address & city required"); return false;
-    }
+    if ((professional.workType === "Shop" || professional.workType === "Both") && (!professional.shopAddress || !professional.shopCity)) { alert("Shop address & city required"); return false; }
     return true;
   };
 
@@ -111,70 +99,54 @@ const TailorProfile = () => {
     } catch { alert("Error saving profile"); }
   };
 
-  const inp: React.CSSProperties = {
-    width: "100%", padding: "12px 16px", border: `1.5px solid ${t.inputBorder}`,
-    borderRadius: "12px", fontSize: "14px", color: t.inputText, background: t.inputBg,
-    boxSizing: "border-box", transition: "border-color 0.2s", outline: "none",
-    appearance: "none" as any,
-  };
-
-  const lbl: React.CSSProperties = {
-    display: "block", fontSize: "11px", fontWeight: 600, color: t.label,
-    textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px",
-  };
+  const inp: React.CSSProperties = { width: "100%", padding: "11px 14px", border: `1.5px solid ${t.inputBorder}`, borderRadius: "10px", fontSize: "14px", color: t.inputText, background: t.inputBg, boxSizing: "border-box", transition: "border-color 0.2s", outline: "none", appearance: "none" as any };
+  const lbl: React.CSSProperties = { display: "block", fontSize: "11px", fontWeight: 600, color: t.label, textTransform: "uppercase", letterSpacing: "1px", marginBottom: "7px" };
 
   return (
-    <div style={{ minHeight: "100vh", background: t.pageBg, padding: "40px 16px", fontFamily: "'DM Sans',sans-serif", position: "relative", transition: "background 0.3s" }}>
+    <div style={{ minHeight: "100vh", background: t.pageBg, fontFamily: "'DM Sans',sans-serif", transition: "background 0.3s" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap');
-        @keyframes fadeUp { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:translateY(0) } }
-        .fade-up { animation: fadeUp 0.5s ease both; }
-        input::placeholder, textarea::placeholder { color: #c4b8a8; }
-        select { appearance: none; }
-        button:active { transform: scale(0.99); }
-        textarea { resize: none; font-family: 'DM Sans', sans-serif; }
-
-        @media (max-width: 768px) {
-          .profile-header { flex-direction: column !important; align-items: flex-start !important; }
-          .search-row { flex-direction: column !important; width: 100% !important; }
-          .search-row input { width: 100% !important; }
-          .personal-grid { grid-template-columns: 1fr !important; }
-          .shop-grid { grid-template-columns: 1fr !important; }
-          .dob-grid { grid-template-columns: 1fr !important; }
-          .tabs-row { overflow-x: auto; }
-          .profile-card { padding: 24px !important; }
+        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        .fade-up{animation:fadeUp 0.5s ease both}
+        input::placeholder,textarea::placeholder{color:#c4b8a8}
+        select{appearance:none}
+        textarea{resize:none;font-family:'DM Sans',sans-serif}
+        button:active{transform:scale(0.99)}
+        *{box-sizing:border-box}
+        @media(max-width:768px){
+          .profile-header{flex-direction:column!important;align-items:flex-start!important}
+          .search-row{flex-direction:column!important;width:100%!important}
+          .search-row input{width:100%!important}
+          .personal-grid{grid-template-columns:1fr!important}
+          .shop-grid{grid-template-columns:1fr!important}
+          .dob-grid{grid-template-columns:1fr!important}
         }
-        @media (max-width: 480px) {
-          .tabs-row button { padding: 10px 12px !important; font-size: 12px !important; }
+        @media(max-width:480px){
+          .profile-card{padding:20px!important}
+          .tabs-row{overflow-x:auto;white-space:nowrap}
         }
       `}</style>
 
+      <DarkToggleNav dark={dark} onToggle={() => setDark(!dark)} title="Tailor Profile" />
+
       {/* Texture */}
-      <div style={{ position: "fixed", inset: 0, backgroundImage: "radial-gradient(circle,rgba(139,115,85,0.06) 1px,transparent 1px)", backgroundSize: "24px 24px", pointerEvents: "none" }} />
+      <div style={{ position: "fixed", inset: 0, backgroundImage: "radial-gradient(circle,rgba(139,115,85,0.05) 1px,transparent 1px)", backgroundSize: "24px 24px", pointerEvents: "none", zIndex: 0 }} />
 
-      {/* Dark toggle */}
-      <button onClick={() => setDark(!dark)} style={{ position: "fixed", top: "16px", right: "16px", zIndex: 200, padding: "8px 16px", borderRadius: "20px", fontSize: "13px", fontWeight: 600, cursor: "pointer", transition: "all 0.2s", background: t.toggleBg, color: t.toggleColor, border: `1px solid ${t.toggleBorder}` }}>
-        {dark ? "☀️ Light" : "🌙 Dark"}
-      </button>
-
-      <div style={{ maxWidth: "900px", margin: "0 auto", position: "relative", zIndex: 10 }} className="fade-up">
-        <div className="profile-card" style={{ background: t.cardBg, borderRadius: "24px", border: `1px solid ${t.cardBorder}`, padding: "40px", boxShadow: "0 8px 48px rgba(139,115,85,0.1)", transition: "background 0.3s" }}>
+      <div style={{ maxWidth: "900px", margin: "0 auto", padding: "28px 16px", position: "relative", zIndex: 1 }} className="fade-up">
+        <div className="profile-card" style={{ background: t.cardBg, borderRadius: "20px", border: `1px solid ${t.cardBorder}`, padding: "32px", boxShadow: "0 8px 40px rgba(139,115,85,0.1)", transition: "background 0.3s" }}>
 
           {/* HEADER */}
-          <div className="profile-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", marginBottom: "32px" }}>
+          <div className="profile-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "14px", marginBottom: "28px" }}>
             <div>
-              <h1 style={{ fontFamily: "'Lora',serif", fontSize: "clamp(22px, 4vw, 28px)", fontWeight: 600, color: t.title }}>✂ Tailor Profile</h1>
-              <p style={{ color: t.sub, fontSize: "14px", marginTop: "4px" }}>Manage your professional details</p>
+              <h1 style={{ fontFamily: "'Lora',serif", fontSize: "clamp(20px,4vw,26px)", fontWeight: 600, color: t.title }}>✂ Tailor Profile</h1>
+              <p style={{ color: t.sub, fontSize: "13px", marginTop: "3px" }}>Manage your professional details</p>
             </div>
-            <div className="search-row" style={{ display: "flex", gap: "10px" }}>
-              <input
-                type="email" placeholder="Search by email..."
-                value={searchEmail} onChange={e => setSearchEmail(e.target.value)}
-                style={{ ...inp, width: "220px" }}
+            <div className="search-row" style={{ display: "flex", gap: "8px" }}>
+              <input type="email" placeholder="Search by email..." value={searchEmail} onChange={e => setSearchEmail(e.target.value)}
+                style={{ ...inp, width: "200px" }}
                 onFocus={e => e.target.style.borderColor = t.accent}
-                onBlur={e => e.target.style.borderColor = t.inputBorder}
-              />
-              <button onClick={handleSearch} style={{ padding: "10px 20px", borderRadius: "10px", fontSize: "14px", fontWeight: 600, color: "#fef3e2", background: t.accent, border: "none", cursor: "pointer", whiteSpace: "nowrap", transition: "background 0.2s" }}
+                onBlur={e => e.target.style.borderColor = t.inputBorder} />
+              <button onClick={handleSearch} style={{ padding: "10px 18px", borderRadius: "10px", fontSize: "13px", fontWeight: 600, color: "#fef3e2", background: t.accent, border: "none", cursor: "pointer", whiteSpace: "nowrap", transition: "background 0.2s" }}
                 onMouseEnter={e => e.currentTarget.style.background = t.accentHover}
                 onMouseLeave={e => e.currentTarget.style.background = t.accent}>
                 Find Record
@@ -183,166 +155,91 @@ const TailorProfile = () => {
           </div>
 
           {/* TABS */}
-          <div className="tabs-row" style={{ display: "flex", gap: "4px", borderBottom: `1px solid ${t.tabBorder}`, marginBottom: "32px" }}>
+          <div className="tabs-row" style={{ display: "flex", gap: "2px", borderBottom: `1px solid ${t.tabBorder}`, marginBottom: "28px" }}>
             {(["personal", "professional", "contact"] as Tab[]).map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab)} style={{
-                padding: "12px 20px", fontSize: "14px", fontWeight: 500,
-                borderRadius: "8px 8px 0 0", border: "none", cursor: "pointer",
-                textTransform: "capitalize", transition: "all 0.2s",
-                background: activeTab === tab ? t.tabActiveBg : "transparent",
-                color: activeTab === tab ? t.tabActive : t.tabInactive,
-                borderBottom: activeTab === tab ? `2px solid ${t.tabActive}` : "2px solid transparent",
-              }}>
+              <button key={tab} onClick={() => setActiveTab(tab)} style={{ padding: "10px 18px", fontSize: "13px", fontWeight: 500, borderRadius: "8px 8px 0 0", border: "none", cursor: "pointer", textTransform: "capitalize", transition: "all 0.2s", background: activeTab === tab ? t.tabActiveBg : "transparent", color: activeTab === tab ? t.tabActive : t.tabInactive, borderBottom: activeTab === tab ? `2px solid ${t.tabActive}` : "2px solid transparent" }}>
                 {tab}
               </button>
             ))}
           </div>
 
-          {/* PERSONAL TAB */}
+          {/* PERSONAL */}
           {activeTab === "personal" && (
-            <div className="personal-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "32px" }}>
-              {/* Profile photo */}
+            <div className="personal-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <div style={{ width: "160px", height: "160px", borderRadius: "50%", border: `4px solid ${t.profileCircleBorder}`, overflow: "hidden", background: t.profileCircleBg, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 20px rgba(139,115,85,0.15)" }}>
-                  {profileImage
-                    ? <img src={profileImage} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    : <span style={{ color: t.profilePlaceholder, fontSize: "13px", textAlign: "center", padding: "0 16px" }}>Profile Photo</span>}
+                <div style={{ width: "140px", height: "140px", borderRadius: "50%", border: `4px solid ${t.cardBorder}`, overflow: "hidden", background: t.pageBg, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 20px rgba(139,115,85,0.12)" }}>
+                  {profileImage ? <img src={profileImage} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <span style={{ color: t.placeholder, fontSize: "12px", textAlign: "center", padding: "0 12px" }}>Profile Photo</span>}
                 </div>
-                <label style={{ marginTop: "16px", padding: "10px 24px", borderRadius: "10px", cursor: "pointer", fontSize: "13px", fontWeight: 600, color: "#fef3e2", background: t.accent, transition: "background 0.2s" }}
+                <label style={{ marginTop: "14px", padding: "9px 22px", borderRadius: "10px", cursor: "pointer", fontSize: "13px", fontWeight: 600, color: "#fef3e2", background: t.accent, transition: "background 0.2s" }}
                   onMouseEnter={(e: any) => e.currentTarget.style.background = t.accentHover}
                   onMouseLeave={(e: any) => e.currentTarget.style.background = t.accent}>
-                  Browse Photo
-                  <input type="file" hidden accept="image/*" onChange={handleProfileImage} />
+                  Browse Photo <input type="file" hidden accept="image/*" onChange={handleProfileImage} />
                 </label>
               </div>
 
-              {/* Fields */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                <div>
-                  <label style={lbl}>Full Name *</label>
-                  <input style={inp} placeholder="Ram Jain" value={personal.fullName}
-                    onChange={e => setPersonal(p => ({ ...p, fullName: e.target.value }))}
-                    onFocus={e => e.target.style.borderColor = t.accent}
-                    onBlur={e => e.target.style.borderColor = t.inputBorder} />
+              <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                <div><label style={lbl}>Full Name *</label><input style={inp} placeholder="Ram Jain" value={personal.fullName} onChange={e => setPersonal(p => ({ ...p, fullName: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} /></div>
+                <div><label style={lbl}>Aadhaar Number</label><input style={inp} placeholder="XXXX XXXX XXXX" value={personal.aadhaar} onChange={e => setPersonal(p => ({ ...p, aadhaar: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} /></div>
+                <div className="dob-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                  <div><label style={lbl}>Date of Birth</label><input style={inp} placeholder="DD/MM/YYYY" value={personal.dob} onChange={e => setPersonal(p => ({ ...p, dob: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} /></div>
+                  <div><label style={lbl}>Gender</label><input style={inp} placeholder="Male / Female" value={personal.gender} onChange={e => setPersonal(p => ({ ...p, gender: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} /></div>
                 </div>
-                <div>
-                  <label style={lbl}>Aadhaar Number</label>
-                  <input style={inp} placeholder="XXXX XXXX XXXX" value={personal.aadhaar}
-                    onChange={e => setPersonal(p => ({ ...p, aadhaar: e.target.value }))}
-                    onFocus={e => e.target.style.borderColor = t.accent}
-                    onBlur={e => e.target.style.borderColor = t.inputBorder} />
-                </div>
-                <div className="dob-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                  <div>
-                    <label style={lbl}>Date of Birth</label>
-                    <input style={inp} placeholder="DD/MM/YYYY" value={personal.dob}
-                      onChange={e => setPersonal(p => ({ ...p, dob: e.target.value }))}
-                      onFocus={e => e.target.style.borderColor = t.accent}
-                      onBlur={e => e.target.style.borderColor = t.inputBorder} />
-                  </div>
-                  <div>
-                    <label style={lbl}>Gender</label>
-                    <input style={inp} placeholder="Male / Female" value={personal.gender}
-                      onChange={e => setPersonal(p => ({ ...p, gender: e.target.value }))}
-                      onFocus={e => e.target.style.borderColor = t.accent}
-                      onBlur={e => e.target.style.borderColor = t.inputBorder} />
-                  </div>
-                </div>
-                <div style={{ border: `2px dashed ${t.aadhaarBoxBorder}`, borderRadius: "12px", padding: "16px", background: t.aadhaarBoxBg }}>
-                  <label style={{ padding: "8px 16px", borderRadius: "8px", cursor: "pointer", display: "inline-block", fontSize: "13px", fontWeight: 600, color: "#fef3e2", background: t.accent, transition: "background 0.2s" }}
+                <div style={{ border: `2px dashed ${t.dottedBorder}`, borderRadius: "12px", padding: "14px", background: t.dottedBg }}>
+                  <label style={{ padding: "7px 14px", borderRadius: "8px", cursor: "pointer", display: "inline-block", fontSize: "12px", fontWeight: 600, color: "#fef3e2", background: t.accent, transition: "background 0.2s" }}
                     onMouseEnter={(e: any) => e.currentTarget.style.background = t.accentHover}
                     onMouseLeave={(e: any) => e.currentTarget.style.background = t.accent}>
-                    Upload Aadhaar (JPG/PNG)
-                    <input type="file" hidden accept="image/jpeg,image/png" onChange={handleAadhaarImage} />
+                    Upload Aadhaar (JPG/PNG) <input type="file" hidden accept="image/jpeg,image/png" onChange={handleAadhaarImage} />
                   </label>
-                  <p style={{ color: t.profilePlaceholder, fontSize: "12px", marginTop: "8px" }}>Aadhaar, DOB & Gender will be auto-filled via OCR</p>
-                  {aadhaarError && <p style={{ color: "#e05555", fontSize: "12px", marginTop: "6px" }}>{aadhaarError}</p>}
+                  <p style={{ color: t.placeholder, fontSize: "11px", marginTop: "7px" }}>Aadhaar, DOB & Gender auto-filled via OCR</p>
+                  {aadhaarError && <p style={{ color: "#e05555", fontSize: "11px", marginTop: "5px" }}>{aadhaarError}</p>}
                 </div>
               </div>
             </div>
           )}
 
-          {/* PROFESSIONAL TAB */}
+          {/* PROFESSIONAL */}
           {activeTab === "professional" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "520px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "18px", maxWidth: "500px" }}>
               {([["Category *", "category", ["Men", "Women", "Both"]], ["Work Type *", "workType", ["Home", "Shop", "Both"]]] as [string, string, string[]][]).map(([label, key, opts]) => (
                 <div key={key}>
                   <label style={lbl}>{label}</label>
                   <div style={{ position: "relative" }}>
-                    <select style={{ ...inp, cursor: "pointer", paddingRight: "36px" }}
-                      value={professional[key as keyof typeof professional]}
-                      onChange={e => setProfessional(p => ({ ...p, [key]: e.target.value }))}
-                      onFocus={e => e.target.style.borderColor = t.accent}
-                      onBlur={e => e.target.style.borderColor = t.inputBorder}>
+                    <select style={{ ...inp, paddingRight: "34px", cursor: "pointer" }} value={professional[key as keyof typeof professional]} onChange={e => setProfessional(p => ({ ...p, [key]: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder}>
                       <option value="">Select...</option>
                       {opts.map(o => <option key={o}>{o}</option>)}
                     </select>
-                    <span style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", color: t.sub, pointerEvents: "none", fontSize: "12px" }}>▾</span>
+                    <span style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", color: t.sub, pointerEvents: "none", fontSize: "11px" }}>▾</span>
                   </div>
                 </div>
               ))}
-
               {([["Specialty", "specialty", "e.g. Bridal, Suits, Kurta"], ["Experience (Since Year)", "experience", "e.g. 2010"], ["Website / Instagram", "website", "https://..."]] as [string, string, string][]).map(([label, key, ph]) => (
                 <div key={key}>
                   <label style={lbl}>{label}</label>
-                  <input style={inp} placeholder={ph}
-                    value={professional[key as keyof typeof professional]}
-                    onChange={e => setProfessional(p => ({ ...p, [key]: e.target.value }))}
-                    onFocus={e => e.target.style.borderColor = t.accent}
-                    onBlur={e => e.target.style.borderColor = t.inputBorder} />
+                  <input style={inp} placeholder={ph} value={professional[key as keyof typeof professional]} onChange={e => setProfessional(p => ({ ...p, [key]: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} />
                 </div>
               ))}
-
               {(professional.workType === "Shop" || professional.workType === "Both") && (
-                <div className="shop-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", background: t.shopBoxBg, border: `1px solid ${t.shopBoxBorder}`, padding: "20px", borderRadius: "12px" }}>
-                  <div>
-                    <label style={lbl}>Shop Address</label>
-                    <input style={inp} placeholder="Street, Area" value={professional.shopAddress}
-                      onChange={e => setProfessional(p => ({ ...p, shopAddress: e.target.value }))}
-                      onFocus={e => e.target.style.borderColor = t.accent}
-                      onBlur={e => e.target.style.borderColor = t.inputBorder} />
-                  </div>
-                  <div>
-                    <label style={lbl}>Shop City</label>
-                    <input style={inp} placeholder="City name" value={professional.shopCity}
-                      onChange={e => setProfessional(p => ({ ...p, shopCity: e.target.value }))}
-                      onFocus={e => e.target.style.borderColor = t.accent}
-                      onBlur={e => e.target.style.borderColor = t.inputBorder} />
-                  </div>
+                <div className="shop-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", background: t.dottedBg, border: `1px solid ${t.dottedBorder}`, padding: "18px", borderRadius: "12px" }}>
+                  <div><label style={lbl}>Shop Address</label><input style={inp} placeholder="Street, Area" value={professional.shopAddress} onChange={e => setProfessional(p => ({ ...p, shopAddress: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} /></div>
+                  <div><label style={lbl}>Shop City</label><input style={inp} placeholder="City name" value={professional.shopCity} onChange={e => setProfessional(p => ({ ...p, shopCity: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} /></div>
                 </div>
               )}
             </div>
           )}
 
-          {/* CONTACT TAB */}
+          {/* CONTACT */}
           {activeTab === "contact" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "520px" }}>
-              <div>
-                <label style={lbl}>Phone Number *</label>
-                <input style={inp} placeholder="10-digit number" value={contact.phone}
-                  onChange={e => setContact(c => ({ ...c, phone: e.target.value }))}
-                  onFocus={e => e.target.style.borderColor = t.accent}
-                  onBlur={e => e.target.style.borderColor = t.inputBorder} />
-              </div>
-              <div>
-                <label style={lbl}>City</label>
-                <input style={inp} placeholder="Your city" value={contact.city}
-                  onChange={e => setContact(c => ({ ...c, city: e.target.value }))}
-                  onFocus={e => e.target.style.borderColor = t.accent}
-                  onBlur={e => e.target.style.borderColor = t.inputBorder} />
-              </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "18px", maxWidth: "500px" }}>
+              <div><label style={lbl}>Phone Number *</label><input style={inp} placeholder="10-digit number" value={contact.phone} onChange={e => setContact(c => ({ ...c, phone: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} /></div>
+              <div><label style={lbl}>City</label><input style={inp} placeholder="Your city" value={contact.city} onChange={e => setContact(c => ({ ...c, city: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} /></div>
               <div>
                 <label style={lbl}>Full Address</label>
-                <textarea style={{ ...inp, height: "110px" }}
-                  placeholder="Street, Area, City, PIN"
-                  value={contact.address}
-                  onChange={e => setContact(c => ({ ...c, address: e.target.value }))} />
+                <textarea style={{ ...inp, height: "100px" }} placeholder="Street, Area, City, PIN" value={contact.address} onChange={e => setContact(c => ({ ...c, address: e.target.value }))} />
               </div>
             </div>
           )}
 
-          {/* SUBMIT */}
-          <button onClick={handleSubmit} style={{ marginTop: "40px", width: "100%", padding: "14px", borderRadius: "12px", fontWeight: 600, fontSize: "14px", color: "#fef3e2", background: t.accent, border: "none", cursor: "pointer", letterSpacing: "0.5px", transition: "background 0.2s" }}
+          <button onClick={handleSubmit} style={{ marginTop: "32px", width: "100%", padding: "13px", borderRadius: "12px", fontWeight: 600, fontSize: "14px", color: "#fef3e2", background: t.accent, border: "none", cursor: "pointer", letterSpacing: "0.4px", transition: "background 0.2s" }}
             onMouseEnter={e => e.currentTarget.style.background = t.accentHover}
             onMouseLeave={e => e.currentTarget.style.background = t.accent}>
             CREATE / UPDATE PROFILE
