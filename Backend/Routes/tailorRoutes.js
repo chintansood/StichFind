@@ -8,5 +8,8 @@ router.get("/", (req, res) => {
 });
 
 router.post("/save-profile", auth, tailorCtrl.saveOrUpdateTailorProfile);
+router.post("/search", auth, tailorCtrl.searchTailorByEmail);
+router.post("/aadhaar-ocr", auth, tailorCtrl.aadhaarOCR);
+
 
 module.exports = router;
