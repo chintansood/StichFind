@@ -1,29 +1,9 @@
 import { useState } from "react";
 import api from "../../api/axios";
-import { DarkToggleNav } from "../../pages/DarkToggleNav";
 
 type Stage = "form" | "success";
 
-const theme = {
-  light: {
-    pageBg: "#fdf8f3", cardBg: "#ffffff", cardBorder: "#ede5d8",
-    title: "#2c1e0f", sub: "#a0917e", label: "#6b5a42",
-    inputBg: "#fdf8f3", inputText: "#2c1e0f", inputBorder: "#e8e0d5",
-    accent: "#8b7355", accentHover: "#6b5a42",
-    hint: "#a0917e", found: "#8b7355", charCount: "#c4b8a8",
-  },
-  dark: {
-    pageBg: "#1a1209", cardBg: "#231a0f", cardBorder: "#3d2e1e",
-    title: "#fef3e2", sub: "#8b7355", label: "#c4a882",
-    inputBg: "#2c1e0f", inputText: "#fef3e2", inputBorder: "#3d2e1e",
-    accent: "#c4a882", accentHover: "#d4b892",
-    hint: "#6b5a42", found: "#c4a882", charCount: "#6b5a42",
-  },
-};
-
 const TailorReview = () => {
-  const [dark, setDark] = useState(false);
-  const t = dark ? theme.dark : theme.light;
   const [stage, setStage] = useState<Stage>("form");
   const [form, setForm] = useState({ phone: "", tailorName: "", rating: 0, review: "" });
   const [ui, setUI] = useState({ tailorFound: false, phoneError: "", submitError: "", loading: false, searching: false });
@@ -46,128 +26,128 @@ const TailorReview = () => {
   const handleSubmit = async () => {
     setUI(u => ({ ...u, submitError: "" }));
     if (!ui.tailorFound) return setUI(u => ({ ...u, submitError: "Enter a valid tailor phone number" }));
-    if (form.rating === 0) return setUI(u => ({ ...u, submitError: "Please select a rating" }));
+    if (form.rating === 0) return setUI(u => ({ ...u, submitError: "Please select a star rating" }));
     if (!form.review.trim()) return setUI(u => ({ ...u, submitError: "Please write a review" }));
     setUI(u => ({ ...u, loading: true }));
     try {
       const token = localStorage.getItem("token");
-      const res = await api.post("/review/add", { phone: form.phone, rating: form.rating, review: form.review }, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await api.post("/review/add",
+        { phone: form.phone, rating: form.rating, review: form.review },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       if (res.data.status) setStage("success");
-      else setUI(u => ({ ...u, submitError: "Failed to publish" }));
-    } catch { setUI(u => ({ ...u, submitError: "Failed to publish" })); }
+      else setUI(u => ({ ...u, submitError: res.data.msg || "Failed to publish" }));
+    } catch { setUI(u => ({ ...u, submitError: "Failed to publish review" })); }
     finally { setUI(u => ({ ...u, loading: false })); }
   };
 
   const reset = () => {
-    setStage("form"); setForm({ phone: "", tailorName: "", rating: 0, review: "" });
-    setUI({ tailorFound: false, phoneError: "", submitError: "", loading: false, searching: false }); setHovered(0);
+    setStage("form");
+    setForm({ phone: "", tailorName: "", rating: 0, review: "" });
+    setUI({ tailorFound: false, phoneError: "", submitError: "", loading: false, searching: false });
+    setHovered(0);
   };
 
-  const inp: React.CSSProperties = { width: "100%", padding: "12px 14px", border: `1.5px solid ${t.inputBorder}`, borderRadius: "10px", fontSize: "14px", color: t.inputText, background: t.inputBg, boxSizing: "border-box", transition: "border-color 0.2s", outline: "none" };
-  const lbl: React.CSSProperties = { display: "block", fontSize: "11px", fontWeight: 600, color: t.label, marginBottom: "8px", letterSpacing: "1px", textTransform: "uppercase" };
-
   return (
-    <div style={{ minHeight: "100vh", background: t.pageBg, fontFamily: "'DM Sans',sans-serif", transition: "background 0.3s" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap');
-        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-        .fade-up { animation: fadeUp 0.5s ease both; }
-        input::placeholder, textarea::placeholder { color: #c4b8a8; }
-        textarea { resize: none; font-family: 'DM Sans',sans-serif; }
-        button:active { transform: scale(0.98); }
-        @media (max-width: 480px) {
-          .review-card { padding: 20px !important; margin: 12px !important; }
-        }
-      `}</style>
+    <div className="min-h-screen bg-gray-50 flex items-start justify-center py-10 px-4" style={{ fontFamily: "'Inter',sans-serif" }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Inter:wght@300;400;500;600&display=swap'); textarea{resize:none;font-family:'Inter',sans-serif}`}</style>
 
-      <DarkToggleNav dark={dark} onToggle={() => setDark(!dark)} title="Write a Review" />
+      <div className="w-full max-w-md">
 
-      {/* Texture */}
-      <div style={{ position: "fixed", inset: 0, backgroundImage: "radial-gradient(circle,rgba(139,115,85,0.05) 1px,transparent 1px)", backgroundSize: "24px 24px", pointerEvents: "none", zIndex: 0 }} />
+        {stage === "form" && (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-7 sm:p-9">
+            {/* Header */}
+            <div className="text-center mb-7">
+              <div className="text-4xl mb-3">✂️</div>
+              <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Lora',serif" }}>Write a Review</h1>
+              <p className="text-gray-400 text-sm mt-1">Share your experience with your tailor</p>
+              <div className="w-10 h-0.5 bg-indigo-500 rounded mx-auto mt-3" />
+            </div>
 
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "32px 16px", position: "relative", zIndex: 1 }}>
-        <div className="review-card fade-up" style={{ width: "100%", maxWidth: "460px", background: t.cardBg, borderRadius: "24px", padding: "36px", boxShadow: "0 8px 48px rgba(139,115,85,0.12)", border: `1px solid ${t.cardBorder}`, transition: "background 0.3s" }}>
-          {stage === "form" && (
-            <>
-              <div style={{ textAlign: "center", marginBottom: "28px" }}>
-                <span style={{ fontSize: "36px", display: "block", marginBottom: "10px" }}>✂️</span>
-                <h1 style={{ fontFamily: "'Lora',serif", fontSize: "22px", color: t.title, fontWeight: 600, margin: "0 0 4px" }}>Tailor Review</h1>
-                <p style={{ color: t.sub, fontSize: "11px", letterSpacing: "2.5px" }}>SHARE YOUR EXPERIENCE</p>
-                <div style={{ width: "36px", height: "2px", background: "linear-gradient(90deg,#8b7355,#c9a84c)", borderRadius: "2px", margin: "12px auto 0" }} />
-              </div>
+            {/* Phone */}
+            <div className="mb-5">
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Tailor's Mobile Number</label>
+              <input
+                className={`w-full px-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition ${ui.tailorFound ? "border-green-400 bg-green-50" : ui.phoneError ? "border-red-300 bg-red-50" : "border-gray-200 bg-gray-50"}`}
+                placeholder="Enter 10-digit number" maxLength={10} value={form.phone}
+                onChange={e => handlePhoneLookup(e.target.value.replace(/\D/g, ""))} />
+              {ui.searching && <p className="text-gray-400 text-xs mt-1.5 flex items-center gap-1"><svg className="animate-spin w-3 h-3" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" /></svg>Searching...</p>}
+              {ui.tailorFound && <p className="text-green-600 text-xs font-semibold mt-1.5 flex items-center gap-1">✓ Found: {form.tailorName}</p>}
+              {ui.phoneError && <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1">⚠ {ui.phoneError}</p>}
+            </div>
 
-              <div style={{ marginBottom: "20px" }}>
-                <label style={lbl}>Tailor's Mobile Number</label>
-                <input style={{ ...inp, borderColor: ui.tailorFound ? t.accent : ui.phoneError ? "#e05555" : t.inputBorder }}
-                  placeholder="Enter 10-digit number" maxLength={10} value={form.phone}
-                  onChange={e => handlePhoneLookup(e.target.value.replace(/\D/g, ""))}
-                  onFocus={e => e.target.style.borderColor = t.accent}
-                  onBlur={e => e.target.style.borderColor = ui.tailorFound ? t.accent : ui.phoneError ? "#e05555" : t.inputBorder} />
-                {ui.searching && <p style={{ color: t.hint, fontSize: "12px", marginTop: "5px" }}>Searching...</p>}
-                {ui.tailorFound && <p style={{ color: t.found, fontSize: "13px", fontWeight: 600, marginTop: "5px" }}>✓ {form.tailorName}</p>}
-                {ui.phoneError && <p style={{ color: "#e05555", fontSize: "11px", marginTop: "4px" }}>{ui.phoneError}</p>}
-              </div>
-
-              <div style={{ marginBottom: "20px" }}>
-                <label style={lbl}>Rate Your Experience</label>
-                <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
-                  {[1,2,3,4,5].map(star => (
-                    <button key={star} style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", transition: "transform 0.15s" }}
-                      onMouseEnter={() => setHovered(star)} onMouseLeave={() => setHovered(0)}
-                      onClick={() => setForm(f => ({ ...f, rating: star }))}>
-                      <svg width="32" height="32" viewBox="0 0 24 24"
-                        fill={star <= (hovered || form.rating) ? "#c9a84c" : "none"}
-                        stroke={star <= (hovered || form.rating) ? "#c9a84c" : "#d4c4a8"} strokeWidth="1.5">
-                        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-                      </svg>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div style={{ marginBottom: "20px" }}>
-                <label style={lbl}>Write Your Review</label>
-                <textarea style={{ ...inp, height: "100px" }}
-                  placeholder="Tell others about your experience..."
-                  maxLength={300} value={form.review}
-                  onChange={e => setForm(f => ({ ...f, review: e.target.value }))} />
-                <p style={{ textAlign: "right", fontSize: "11px", color: t.charCount, marginTop: "3px" }}>{form.review.length}/300</p>
-              </div>
-
-              {ui.submitError && <p style={{ color: "#e05555", fontSize: "12px", marginBottom: "12px" }}>{ui.submitError}</p>}
-
-              <button style={{ width: "100%", padding: "13px", background: t.accent, color: "#fef3e2", border: "none", borderRadius: "12px", fontSize: "14px", fontWeight: 600, cursor: "pointer", transition: "background 0.2s", opacity: ui.loading ? 0.7 : 1 }}
-                onClick={handleSubmit} disabled={ui.loading}
-                onMouseEnter={e => e.currentTarget.style.background = t.accentHover}
-                onMouseLeave={e => e.currentTarget.style.background = t.accent}>
-                {ui.loading ? "Publishing..." : "Publish Review"}
-              </button>
-            </>
-          )}
-
-          {stage === "success" && (
-            <div className="fade-up" style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "48px", marginBottom: "16px" }}>🎉</div>
-              <h2 style={{ fontFamily: "'Lora',serif", fontSize: "22px", color: t.title, fontWeight: 600, marginBottom: "8px" }}>Review Published!</h2>
-              <p style={{ color: t.sub, fontSize: "11px", letterSpacing: "2.5px" }}>Thank you for reviewing</p>
-              <p style={{ fontFamily: "'Lora',serif", fontSize: "17px", color: t.title, fontWeight: 600, margin: "4px 0 16px" }}>{form.tailorName}</p>
-              <div style={{ display: "flex", justifyContent: "center", gap: "5px", marginBottom: "12px" }}>
-                {[1,2,3,4,5].map(s => (
-                  <svg key={s} width="26" height="26" viewBox="0 0 24 24" fill={s <= form.rating ? "#c9a84c" : "none"} stroke={s <= form.rating ? "#c9a84c" : "#d4c4a8"} strokeWidth="1.5">
-                    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-                  </svg>
+            {/* Stars */}
+            <div className="mb-5">
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Your Rating</label>
+              <div className="flex justify-center gap-2">
+                {[1,2,3,4,5].map(star => (
+                  <button key={star} className="p-1 transition-transform hover:scale-110"
+                    onMouseEnter={() => setHovered(star)} onMouseLeave={() => setHovered(0)}
+                    onClick={() => setForm(f => ({ ...f, rating: star }))}>
+                    <svg width="32" height="32" viewBox="0 0 24 24"
+                      fill={star <= (hovered || form.rating) ? "#f59e0b" : "none"}
+                      stroke={star <= (hovered || form.rating) ? "#f59e0b" : "#d1d5db"} strokeWidth="1.5">
+                      <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                    </svg>
+                  </button>
                 ))}
               </div>
-              <p style={{ color: t.sub, fontSize: "13px", fontStyle: "italic", margin: "0 0 24px", lineHeight: 1.6 }}>"{form.review}"</p>
-              <button style={{ width: "100%", padding: "13px", background: t.accent, color: "#fef3e2", border: "none", borderRadius: "12px", fontSize: "14px", fontWeight: 600, cursor: "pointer", transition: "background 0.2s" }}
-                onClick={reset}
-                onMouseEnter={e => e.currentTarget.style.background = t.accentHover}
-                onMouseLeave={e => e.currentTarget.style.background = t.accent}>
-                Write Another Review
-              </button>
+              {form.rating > 0 && (
+                <p className="text-center text-xs text-amber-500 font-medium mt-1.5">
+                  {["", "Poor", "Fair", "Good", "Very Good", "Excellent!"][form.rating]}
+                </p>
+              )}
             </div>
-          )}
-        </div>
+
+            {/* Review text */}
+            <div className="mb-5">
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Your Review</label>
+              <textarea
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 h-24 placeholder-gray-300"
+                placeholder="Tell others about your experience..."
+                maxLength={300} value={form.review}
+                onChange={e => setForm(f => ({ ...f, review: e.target.value }))} />
+              <p className="text-right text-xs text-gray-300 mt-0.5">{form.review.length}/300</p>
+            </div>
+
+            {ui.submitError && (
+              <div className="mb-4 px-4 py-2.5 bg-red-50 border border-red-200 rounded-xl text-red-600 text-xs font-medium flex items-center gap-2">
+                ⚠ {ui.submitError}
+              </div>
+            )}
+
+            <button
+              onClick={handleSubmit} disabled={ui.loading}
+              className="w-full py-3 bg-indigo-600 text-white rounded-xl font-semibold text-sm hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+              {ui.loading ? (
+                <><svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" /></svg>Publishing...</>
+              ) : "Publish Review →"}
+            </button>
+          </div>
+        )}
+
+        {stage === "success" && (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-9 text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5 text-3xl">🎉</div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-1" style={{ fontFamily: "'Lora',serif" }}>Review Published!</h2>
+            <p className="text-gray-400 text-sm mb-4">Thank you for reviewing</p>
+            <p className="font-semibold text-gray-900 text-lg mb-4" style={{ fontFamily: "'Lora',serif" }}>{form.tailorName}</p>
+            <div className="flex justify-center gap-1 mb-5">
+              {[1,2,3,4,5].map(s => (
+                <svg key={s} width="24" height="24" viewBox="0 0 24 24"
+                  fill={s <= form.rating ? "#f59e0b" : "none"}
+                  stroke={s <= form.rating ? "#f59e0b" : "#d1d5db"} strokeWidth="1.5">
+                  <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                </svg>
+              ))}
+            </div>
+            <p className="text-gray-400 text-sm italic mb-7 px-4">"{form.review}"</p>
+            <button onClick={reset}
+              className="w-full py-3 bg-indigo-600 text-white rounded-xl font-semibold text-sm hover:bg-indigo-700 transition-colors">
+              Write Another Review
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,40 +1,16 @@
 import { useState } from "react";
 import api from "../../api/axios";
-import { DarkToggleNav } from "../../pages/DarkToggleNav";
 
 type Tab = "personal" | "professional" | "contact";
 
-const theme = {
-  light: {
-    pageBg: "#fdf8f3", cardBg: "#ffffff", cardBorder: "#ede5d8",
-    title: "#2c1e0f", sub: "#a0917e", label: "#6b5a42",
-    inputBg: "#fdf8f3", inputText: "#2c1e0f", inputBorder: "#e8e0d5",
-    accent: "#8b7355", accentHover: "#6b5a42",
-    tabActive: "#8b7355", tabInactive: "#a0917e", tabActiveBg: "#fdf8f3", tabBorder: "#ede5d8",
-    dottedBorder: "#e8e0d5", dottedBg: "#fdf8f3",
-    placeholder: "#c4b8a8",
-  },
-  dark: {
-    pageBg: "#1a1209", cardBg: "#231a0f", cardBorder: "#3d2e1e",
-    title: "#fef3e2", sub: "#8b7355", label: "#c4a882",
-    inputBg: "#2c1e0f", inputText: "#fef3e2", inputBorder: "#3d2e1e",
-    accent: "#c4a882", accentHover: "#d4b892",
-    tabActive: "#c4a882", tabInactive: "#6b5a42", tabActiveBg: "#2c1e0f", tabBorder: "#3d2e1e",
-    dottedBorder: "#3d2e1e", dottedBg: "#2c1e0f",
-    placeholder: "#6b5a42",
-  },
-};
-
 const TailorProfile = () => {
-  const [dark, setDark] = useState(false);
-  const t = dark ? theme.dark : theme.light;
-
   const [activeTab, setActiveTab] = useState<Tab>("personal");
   const [searchEmail, setSearchEmail] = useState("");
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [aadhaarFile, setAadhaarFile] = useState<File | null>(null);
   const [aadhaarError, setAadhaarError] = useState("");
+  const [saving, setSaving] = useState(false);
   const [personal, setPersonal] = useState({ fullName: "", aadhaar: "", dob: "", gender: "" });
   const [professional, setProfessional] = useState({ category: "", specialty: "", experience: "", website: "", workType: "", shopAddress: "", shopCity: "" });
   const [contact, setContact] = useState({ phone: "", city: "", address: "" });
@@ -85,6 +61,7 @@ const TailorProfile = () => {
 
   const handleSubmit = async () => {
     if (!validate()) return;
+    setSaving(true);
     const fd = new FormData();
     fd.append("email", searchEmail);
     Object.entries(personal).forEach(([k, v]) => fd.append(k, v));
@@ -97,153 +74,141 @@ const TailorProfile = () => {
       if (res.data.status) alert("Profile saved ✅");
       else alert(res.data.msg);
     } catch { alert("Error saving profile"); }
+    finally { setSaving(false); }
   };
 
-  const inp: React.CSSProperties = { width: "100%", padding: "11px 14px", border: `1.5px solid ${t.inputBorder}`, borderRadius: "10px", fontSize: "14px", color: t.inputText, background: t.inputBg, boxSizing: "border-box", transition: "border-color 0.2s", outline: "none", appearance: "none" as any };
-  const lbl: React.CSSProperties = { display: "block", fontSize: "11px", fontWeight: 600, color: t.label, textTransform: "uppercase", letterSpacing: "1px", marginBottom: "7px" };
+  const inp = "w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition placeholder-gray-300";
+  const lbl = "block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5";
+
+  const tabs: Tab[] = ["personal", "professional", "contact"];
 
   return (
-    <div style={{ minHeight: "100vh", background: t.pageBg, fontFamily: "'DM Sans',sans-serif", transition: "background 0.3s" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap');
-        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-        .fade-up{animation:fadeUp 0.5s ease both}
-        input::placeholder,textarea::placeholder{color:#c4b8a8}
-        select{appearance:none}
-        textarea{resize:none;font-family:'DM Sans',sans-serif}
-        button:active{transform:scale(0.99)}
-        *{box-sizing:border-box}
-        @media(max-width:768px){
-          .profile-header{flex-direction:column!important;align-items:flex-start!important}
-          .search-row{flex-direction:column!important;width:100%!important}
-          .search-row input{width:100%!important}
-          .personal-grid{grid-template-columns:1fr!important}
-          .shop-grid{grid-template-columns:1fr!important}
-          .dob-grid{grid-template-columns:1fr!important}
-        }
-        @media(max-width:480px){
-          .profile-card{padding:20px!important}
-          .tabs-row{overflow-x:auto;white-space:nowrap}
-        }
-      `}</style>
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6" style={{ fontFamily: "'Inter',sans-serif" }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Inter:wght@300;400;500;600&display=swap'); textarea{resize:none;font-family:'Inter',sans-serif} select{appearance:none}`}</style>
 
-      <DarkToggleNav dark={dark} onToggle={() => setDark(!dark)} title="Tailor Profile" />
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
 
-      {/* Texture */}
-      <div style={{ position: "fixed", inset: 0, backgroundImage: "radial-gradient(circle,rgba(139,115,85,0.05) 1px,transparent 1px)", backgroundSize: "24px 24px", pointerEvents: "none", zIndex: 0 }} />
-
-      <div style={{ maxWidth: "900px", margin: "0 auto", padding: "28px 16px", position: "relative", zIndex: 1 }} className="fade-up">
-        <div className="profile-card" style={{ background: t.cardBg, borderRadius: "20px", border: `1px solid ${t.cardBorder}`, padding: "32px", boxShadow: "0 8px 40px rgba(139,115,85,0.1)", transition: "background 0.3s" }}>
-
-          {/* HEADER */}
-          <div className="profile-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "14px", marginBottom: "28px" }}>
-            <div>
-              <h1 style={{ fontFamily: "'Lora',serif", fontSize: "clamp(20px,4vw,26px)", fontWeight: 600, color: t.title }}>✂ Tailor Profile</h1>
-              <p style={{ color: t.sub, fontSize: "13px", marginTop: "3px" }}>Manage your professional details</p>
-            </div>
-            <div className="search-row" style={{ display: "flex", gap: "8px" }}>
-              <input type="email" placeholder="Search by email..." value={searchEmail} onChange={e => setSearchEmail(e.target.value)}
-                style={{ ...inp, width: "200px" }}
-                onFocus={e => e.target.style.borderColor = t.accent}
-                onBlur={e => e.target.style.borderColor = t.inputBorder} />
-              <button onClick={handleSearch} style={{ padding: "10px 18px", borderRadius: "10px", fontSize: "13px", fontWeight: 600, color: "#fef3e2", background: t.accent, border: "none", cursor: "pointer", whiteSpace: "nowrap", transition: "background 0.2s" }}
-                onMouseEnter={e => e.currentTarget.style.background = t.accentHover}
-                onMouseLeave={e => e.currentTarget.style.background = t.accent}>
-                Find Record
-              </button>
+          {/* Header */}
+          <div className="p-5 sm:p-7 border-b border-gray-100">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Lora',serif" }}>✂ Tailor Profile</h1>
+                <p className="text-gray-500 text-sm mt-0.5">Manage your professional details</p>
+              </div>
+              <div className="flex gap-2 flex-col sm:flex-row">
+                <input type="email" placeholder="Search by email..." value={searchEmail}
+                  onChange={e => setSearchEmail(e.target.value)}
+                  className="px-4 py-2 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-52 placeholder-gray-300" />
+                <button onClick={handleSearch}
+                  className="px-5 py-2 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors whitespace-nowrap">
+                  Find Record
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* TABS */}
-          <div className="tabs-row" style={{ display: "flex", gap: "2px", borderBottom: `1px solid ${t.tabBorder}`, marginBottom: "28px" }}>
-            {(["personal", "professional", "contact"] as Tab[]).map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab)} style={{ padding: "10px 18px", fontSize: "13px", fontWeight: 500, borderRadius: "8px 8px 0 0", border: "none", cursor: "pointer", textTransform: "capitalize", transition: "all 0.2s", background: activeTab === tab ? t.tabActiveBg : "transparent", color: activeTab === tab ? t.tabActive : t.tabInactive, borderBottom: activeTab === tab ? `2px solid ${t.tabActive}` : "2px solid transparent" }}>
+          {/* Tabs */}
+          <div className="flex border-b border-gray-100 overflow-x-auto">
+            {tabs.map(tab => (
+              <button key={tab} onClick={() => setActiveTab(tab)}
+                className={`px-5 py-3 text-sm font-medium capitalize whitespace-nowrap transition-colors border-b-2 ${activeTab === tab ? "text-indigo-600 border-indigo-600 bg-indigo-50/50" : "text-gray-500 border-transparent hover:text-gray-700"}`}>
                 {tab}
               </button>
             ))}
           </div>
 
-          {/* PERSONAL */}
-          {activeTab === "personal" && (
-            <div className="personal-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <div style={{ width: "140px", height: "140px", borderRadius: "50%", border: `4px solid ${t.cardBorder}`, overflow: "hidden", background: t.pageBg, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 20px rgba(139,115,85,0.12)" }}>
-                  {profileImage ? <img src={profileImage} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <span style={{ color: t.placeholder, fontSize: "12px", textAlign: "center", padding: "0 12px" }}>Profile Photo</span>}
-                </div>
-                <label style={{ marginTop: "14px", padding: "9px 22px", borderRadius: "10px", cursor: "pointer", fontSize: "13px", fontWeight: 600, color: "#fef3e2", background: t.accent, transition: "background 0.2s" }}
-                  onMouseEnter={(e: any) => e.currentTarget.style.background = t.accentHover}
-                  onMouseLeave={(e: any) => e.currentTarget.style.background = t.accent}>
-                  Browse Photo <input type="file" hidden accept="image/*" onChange={handleProfileImage} />
-                </label>
-              </div>
+          <div className="p-5 sm:p-7">
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-                <div><label style={lbl}>Full Name *</label><input style={inp} placeholder="Ram Jain" value={personal.fullName} onChange={e => setPersonal(p => ({ ...p, fullName: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} /></div>
-                <div><label style={lbl}>Aadhaar Number</label><input style={inp} placeholder="XXXX XXXX XXXX" value={personal.aadhaar} onChange={e => setPersonal(p => ({ ...p, aadhaar: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} /></div>
-                <div className="dob-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-                  <div><label style={lbl}>Date of Birth</label><input style={inp} placeholder="DD/MM/YYYY" value={personal.dob} onChange={e => setPersonal(p => ({ ...p, dob: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} /></div>
-                  <div><label style={lbl}>Gender</label><input style={inp} placeholder="Male / Female" value={personal.gender} onChange={e => setPersonal(p => ({ ...p, gender: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} /></div>
-                </div>
-                <div style={{ border: `2px dashed ${t.dottedBorder}`, borderRadius: "12px", padding: "14px", background: t.dottedBg }}>
-                  <label style={{ padding: "7px 14px", borderRadius: "8px", cursor: "pointer", display: "inline-block", fontSize: "12px", fontWeight: 600, color: "#fef3e2", background: t.accent, transition: "background 0.2s" }}
-                    onMouseEnter={(e: any) => e.currentTarget.style.background = t.accentHover}
-                    onMouseLeave={(e: any) => e.currentTarget.style.background = t.accent}>
-                    Upload Aadhaar (JPG/PNG) <input type="file" hidden accept="image/jpeg,image/png" onChange={handleAadhaarImage} />
+            {/* PERSONAL */}
+            {activeTab === "personal" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Photo */}
+                <div className="flex flex-col items-center gap-4">
+                  <div className="w-32 h-32 rounded-full border-4 border-gray-100 overflow-hidden bg-gray-50 flex items-center justify-center shadow-sm">
+                    {profileImage
+                      ? <img src={profileImage} className="w-full h-full object-cover" />
+                      : <span className="text-gray-300 text-xs text-center px-3">Profile Photo</span>}
+                  </div>
+                  <label className="px-5 py-2 bg-indigo-600 text-white rounded-xl text-sm font-semibold cursor-pointer hover:bg-indigo-700 transition-colors">
+                    Browse Photo <input type="file" hidden accept="image/*" onChange={handleProfileImage} />
                   </label>
-                  <p style={{ color: t.placeholder, fontSize: "11px", marginTop: "7px" }}>Aadhaar, DOB & Gender auto-filled via OCR</p>
-                  {aadhaarError && <p style={{ color: "#e05555", fontSize: "11px", marginTop: "5px" }}>{aadhaarError}</p>}
                 </div>
-              </div>
-            </div>
-          )}
 
-          {/* PROFESSIONAL */}
-          {activeTab === "professional" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "18px", maxWidth: "500px" }}>
-              {([["Category *", "category", ["Men", "Women", "Both"]], ["Work Type *", "workType", ["Home", "Shop", "Both"]]] as [string, string, string[]][]).map(([label, key, opts]) => (
-                <div key={key}>
-                  <label style={lbl}>{label}</label>
-                  <div style={{ position: "relative" }}>
-                    <select style={{ ...inp, paddingRight: "34px", cursor: "pointer" }} value={professional[key as keyof typeof professional]} onChange={e => setProfessional(p => ({ ...p, [key]: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder}>
-                      <option value="">Select...</option>
-                      {opts.map(o => <option key={o}>{o}</option>)}
-                    </select>
-                    <span style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", color: t.sub, pointerEvents: "none", fontSize: "11px" }}>▾</span>
+                {/* Fields */}
+                <div className="space-y-4">
+                  <div><label className={lbl}>Full Name *</label><input className={inp} placeholder="Ram Jain" value={personal.fullName} onChange={e => setPersonal(p => ({ ...p, fullName: e.target.value }))} /></div>
+                  <div><label className={lbl}>Aadhaar Number</label><input className={inp} placeholder="XXXX XXXX XXXX" value={personal.aadhaar} onChange={e => setPersonal(p => ({ ...p, aadhaar: e.target.value }))} /></div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div><label className={lbl}>Date of Birth</label><input className={inp} placeholder="DD/MM/YYYY" value={personal.dob} onChange={e => setPersonal(p => ({ ...p, dob: e.target.value }))} /></div>
+                    <div><label className={lbl}>Gender</label><input className={inp} placeholder="Male / Female" value={personal.gender} onChange={e => setPersonal(p => ({ ...p, gender: e.target.value }))} /></div>
+                  </div>
+                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 bg-gray-50">
+                    <label className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-semibold cursor-pointer hover:bg-indigo-700 transition-colors inline-block">
+                      Upload Aadhaar (JPG/PNG) <input type="file" hidden accept="image/jpeg,image/png" onChange={handleAadhaarImage} />
+                    </label>
+                    <p className="text-gray-400 text-xs mt-2">Auto-fills Aadhaar, DOB & Gender via OCR</p>
+                    {aadhaarError && <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1">⚠ {aadhaarError}</p>}
                   </div>
                 </div>
-              ))}
-              {([["Specialty", "specialty", "e.g. Bridal, Suits, Kurta"], ["Experience (Since Year)", "experience", "e.g. 2010"], ["Website / Instagram", "website", "https://..."]] as [string, string, string][]).map(([label, key, ph]) => (
-                <div key={key}>
-                  <label style={lbl}>{label}</label>
-                  <input style={inp} placeholder={ph} value={professional[key as keyof typeof professional]} onChange={e => setProfessional(p => ({ ...p, [key]: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} />
-                </div>
-              ))}
-              {(professional.workType === "Shop" || professional.workType === "Both") && (
-                <div className="shop-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", background: t.dottedBg, border: `1px solid ${t.dottedBorder}`, padding: "18px", borderRadius: "12px" }}>
-                  <div><label style={lbl}>Shop Address</label><input style={inp} placeholder="Street, Area" value={professional.shopAddress} onChange={e => setProfessional(p => ({ ...p, shopAddress: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} /></div>
-                  <div><label style={lbl}>Shop City</label><input style={inp} placeholder="City name" value={professional.shopCity} onChange={e => setProfessional(p => ({ ...p, shopCity: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} /></div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* CONTACT */}
-          {activeTab === "contact" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "18px", maxWidth: "500px" }}>
-              <div><label style={lbl}>Phone Number *</label><input style={inp} placeholder="10-digit number" value={contact.phone} onChange={e => setContact(c => ({ ...c, phone: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} /></div>
-              <div><label style={lbl}>City</label><input style={inp} placeholder="Your city" value={contact.city} onChange={e => setContact(c => ({ ...c, city: e.target.value }))} onFocus={e => e.target.style.borderColor = t.accent} onBlur={e => e.target.style.borderColor = t.inputBorder} /></div>
-              <div>
-                <label style={lbl}>Full Address</label>
-                <textarea style={{ ...inp, height: "100px" }} placeholder="Street, Area, City, PIN" value={contact.address} onChange={e => setContact(c => ({ ...c, address: e.target.value }))} />
               </div>
-            </div>
-          )}
+            )}
 
-          <button onClick={handleSubmit} style={{ marginTop: "32px", width: "100%", padding: "13px", borderRadius: "12px", fontWeight: 600, fontSize: "14px", color: "#fef3e2", background: t.accent, border: "none", cursor: "pointer", letterSpacing: "0.4px", transition: "background 0.2s" }}
-            onMouseEnter={e => e.currentTarget.style.background = t.accentHover}
-            onMouseLeave={e => e.currentTarget.style.background = t.accent}>
-            CREATE / UPDATE PROFILE
-          </button>
+            {/* PROFESSIONAL */}
+            {activeTab === "professional" && (
+              <div className="space-y-4 max-w-lg">
+                {[["Category *", "category", ["Men", "Women", "Both"]], ["Work Type *", "workType", ["Home", "Shop", "Both"]]] .map(([label, key, opts]) => (
+                  <div key={key as string}>
+                    <label className={lbl}>{label as string}</label>
+                    <div className="relative">
+                      <select className={`${inp} cursor-pointer pr-9`}
+                        value={professional[key as keyof typeof professional]}
+                        onChange={e => setProfessional(p => ({ ...p, [key as string]: e.target.value }))}>
+                        <option value="">Select...</option>
+                        {(opts as string[]).map(o => <option key={o}>{o}</option>)}
+                      </select>
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs">▾</span>
+                    </div>
+                  </div>
+                ))}
+                {[["Specialty", "specialty", "e.g. Bridal, Suits, Kurta"], ["Experience (Since Year)", "experience", "e.g. 2010"], ["Website / Instagram", "website", "https://..."]]
+                  .map(([label, key, ph]) => (
+                    <div key={key as string}>
+                      <label className={lbl}>{label as string}</label>
+                      <input className={inp} placeholder={ph as string}
+                        value={professional[key as keyof typeof professional]}
+                        onChange={e => setProfessional(p => ({ ...p, [key as string]: e.target.value }))} />
+                    </div>
+                  ))}
+                {(professional.workType === "Shop" || professional.workType === "Both") && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-indigo-50 border border-indigo-100 p-4 rounded-xl">
+                    <div><label className={lbl}>Shop Address</label><input className={inp} placeholder="Street, Area" value={professional.shopAddress} onChange={e => setProfessional(p => ({ ...p, shopAddress: e.target.value }))} /></div>
+                    <div><label className={lbl}>Shop City</label><input className={inp} placeholder="City name" value={professional.shopCity} onChange={e => setProfessional(p => ({ ...p, shopCity: e.target.value }))} /></div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* CONTACT */}
+            {activeTab === "contact" && (
+              <div className="space-y-4 max-w-lg">
+                <div><label className={lbl}>Phone Number *</label><input className={inp} placeholder="10-digit number" value={contact.phone} onChange={e => setContact(c => ({ ...c, phone: e.target.value }))} /></div>
+                <div><label className={lbl}>City</label><input className={inp} placeholder="Your city" value={contact.city} onChange={e => setContact(c => ({ ...c, city: e.target.value }))} /></div>
+                <div>
+                  <label className={lbl}>Full Address</label>
+                  <textarea className={`${inp} h-24`} placeholder="Street, Area, City, PIN" value={contact.address} onChange={e => setContact(c => ({ ...c, address: e.target.value }))} />
+                </div>
+              </div>
+            )}
+
+            {/* Submit */}
+            <button onClick={handleSubmit} disabled={saving}
+              className="mt-8 w-full py-3 bg-indigo-600 text-white rounded-xl font-semibold text-sm hover:bg-indigo-700 active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+              {saving ? (
+                <><svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" /></svg>Saving...</>
+              ) : "💾 Create / Update Profile"}
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,38 +1,15 @@
 import { useState } from "react";
 import api from "../api/axios";
 import { Link, useNavigate } from "react-router-dom";
-import { DarkToggleNav } from "../pages/DarkToggleNav";
 
 interface FormData { emailid: string; pwd: string; }
 interface Errors { emailid?: string; pwd?: string; }
 
-const theme = {
-  light: {
-    pageBg: "#fdf8f3", cardBg: "#ffffff", cardBorder: "#ede5d8",
-    cardShadow: "0 4px 40px rgba(139,115,85,0.1)",
-    title: "#2c1e0f", sub: "#a0917e", label: "#6b5a42",
-    inputBg: "#fdf8f3", inputText: "#2c1e0f", inputBorder: "#e8e0d5",
-    accent: "#8b7355", accentHover: "#6b5a42",
-    leftBg: "linear-gradient(160deg,#3d2e1e 0%,#5c4433 50%,#7a5c3f 100%)",
-    brandTitle: "#fef3e2", brandSub: "rgba(254,243,226,0.65)", dot: "#fef3e2",
-  },
-  dark: {
-    pageBg: "#1a1209", cardBg: "#231a0f", cardBorder: "#3d2e1e",
-    cardShadow: "0 4px 40px rgba(0,0,0,0.4)",
-    title: "#fef3e2", sub: "#8b7355", label: "#c4a882",
-    inputBg: "#2c1e0f", inputText: "#fef3e2", inputBorder: "#3d2e1e",
-    accent: "#c4a882", accentHover: "#d4b892",
-    leftBg: "linear-gradient(160deg,#0f0a05 0%,#1e150a 50%,#2a1c0f 100%)",
-    brandTitle: "#fef3e2", brandSub: "rgba(254,243,226,0.5)", dot: "#fef3e2",
-  },
-};
-
 const Login = () => {
   const navigate = useNavigate();
-  const [dark, setDark] = useState(false);
-  const t = dark ? theme.dark : theme.light;
   const [formData, setFormData] = useState<FormData>({ emailid: "", pwd: "" });
   const [errors, setErrors] = useState<Errors>({});
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -43,7 +20,7 @@ const Login = () => {
   const validate = () => {
     let e: Errors = {};
     if (!formData.emailid.trim()) e.emailid = "Email is required";
-    else if (!/^\S+@\S+\.\S+$/.test(formData.emailid)) e.emailid = "Invalid email";
+    else if (!/^\S+@\S+\.\S+$/.test(formData.emailid)) e.emailid = "Invalid email format";
     if (!formData.pwd) e.pwd = "Password is required";
     else if (formData.pwd.length < 6) e.pwd = "At least 6 characters";
     setErrors(e);
@@ -52,6 +29,7 @@ const Login = () => {
 
   const handleLogin = async () => {
     if (!validate()) return;
+    setLoading(true);
     try {
       const res = await api.post("/user/login", formData);
       if (res.data.status) {
@@ -60,71 +38,97 @@ const Login = () => {
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("userType", res.data.user.userType);
         navigate(res.data.user.userType === "customer" ? "/customer/CustomerDashboard" : "/tailor/TailorDashboard");
-      } else alert(res.data.message);
-    } catch { alert("Error occurred"); }
+      } else {
+        alert(res.data.message || "Login failed");
+      }
+    } catch {
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: t.pageBg, fontFamily: "'DM Sans',sans-serif", transition: "background 0.3s" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap');
-        @keyframes fadeUp { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:translateY(0) } }
-        .fade-up { animation: fadeUp 0.5s ease both; }
-        input::placeholder { color: #c4b8a8; }
-        input:focus { outline: none; }
-        button:active { transform: scale(0.98); }
-        .login-left { display: flex; }
-        @media (max-width: 700px) { .login-left { display: none !important; } }
-      `}</style>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Inter:wght@300;400;500;600&display=swap');`}</style>
 
-      <DarkToggleNav dark={dark} onToggle={() => setDark(!dark)} />
+      <div className="flex flex-1 flex-col lg:flex-row">
 
-      <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-        {/* Left panel */}
-        <div className="login-left" style={{ width: "45%", background: t.leftBg, alignItems: "center", justifyContent: "center", padding: "48px", position: "relative", overflow: "hidden" }}>
-          <div style={{ textAlign: "center", position: "relative", zIndex: 1 }}>
-            <div style={{ fontSize: "56px", color: "rgba(255,235,180,0.6)", marginBottom: "16px" }}>✂</div>
-            <h1 style={{ fontFamily: "'Lora',serif", fontSize: "36px", color: t.brandTitle, fontWeight: 600, margin: "0 0 12px" }}>StitchFind</h1>
-            <p style={{ color: t.brandSub, fontSize: "15px", lineHeight: 1.7, maxWidth: "280px" }}>Connect with skilled tailors and bring your fashion ideas to life.</p>
-            <div style={{ display: "flex", gap: "8px", justifyContent: "center", marginTop: "32px" }}>
-              {[0,1,2,3,4,5,6,7].map(i => <div key={i} style={{ width: "8px", height: "8px", borderRadius: "50%", background: t.dot, opacity: i % 2 === 0 ? 0.6 : 0.3 }} />)}
+        {/* Left branding panel — hidden on mobile */}
+        <div className="hidden lg:flex lg:w-5/12 bg-indigo-600 flex-col items-center justify-center p-12 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
+          <div className="relative z-10 text-center max-w-xs">
+            <div className="text-6xl mb-6 opacity-80">✂️</div>
+            <h1 className="text-4xl font-bold text-white mb-4" style={{ fontFamily: "'Lora',serif" }}>StitchFind</h1>
+            <p className="text-indigo-100 text-base leading-relaxed">Connect with skilled tailors and bring your fashion ideas to life.</p>
+            <div className="mt-8 flex gap-2 justify-center flex-wrap">
+              {["✂ Tailors", "📍 Local", "⭐ Rated", "🧵 Verified"].map(tag => (
+                <span key={tag} className="text-xs px-3 py-1 rounded-full bg-white/10 text-white border border-white/20">{tag}</span>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Right panel */}
-        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", overflowY: "auto" }}>
-          <div className="fade-up" style={{ width: "100%", maxWidth: "400px", background: t.cardBg, borderRadius: "20px", padding: "clamp(24px, 5vw, 40px)", boxShadow: t.cardShadow, border: `1px solid ${t.cardBorder}`, transition: "background 0.3s" }}>
-            <h2 style={{ fontFamily: "'Lora',serif", fontSize: "26px", color: t.title, fontWeight: 600, margin: "0 0 4px" }}>Welcome back</h2>
-            <p style={{ color: t.sub, fontSize: "14px", margin: "0 0 28px" }}>Sign in to your account</p>
+        {/* Right form */}
+        <div className="flex-1 flex items-center justify-center p-6 sm:p-10">
+          <div className="w-full max-w-md">
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: t.label, marginBottom: "6px" }}>Email address</label>
-                <input name="emailid" type="email" value={formData.emailid} onChange={handleChange} placeholder="you@example.com"
-                  style={{ width: "100%", padding: "12px 14px", border: `1.5px solid ${t.inputBorder}`, borderRadius: "10px", fontSize: "14px", color: t.inputText, background: t.inputBg, boxSizing: "border-box", transition: "border-color 0.2s" }}
-                  onFocus={e => e.target.style.borderColor = t.accent}
-                  onBlur={e => e.target.style.borderColor = t.inputBorder} />
-                {errors.emailid && <p style={{ color: "#e05555", fontSize: "11px", marginTop: "4px" }}>{errors.emailid}</p>}
-              </div>
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: t.label, marginBottom: "6px" }}>Password</label>
-                <input name="pwd" type="password" value={formData.pwd} onChange={handleChange} placeholder="••••••••"
-                  style={{ width: "100%", padding: "12px 14px", border: `1.5px solid ${t.inputBorder}`, borderRadius: "10px", fontSize: "14px", color: t.inputText, background: t.inputBg, boxSizing: "border-box", transition: "border-color 0.2s" }}
-                  onFocus={e => e.target.style.borderColor = t.accent}
-                  onBlur={e => e.target.style.borderColor = t.inputBorder} />
-                {errors.pwd && <p style={{ color: "#e05555", fontSize: "11px", marginTop: "4px" }}>{errors.pwd}</p>}
-              </div>
-              <button style={{ width: "100%", padding: "13px", background: t.accent, color: "#fef3e2", border: "none", borderRadius: "10px", fontSize: "14px", fontWeight: 600, cursor: "pointer", transition: "background 0.2s" }}
-                onClick={handleLogin}
-                onMouseEnter={e => e.currentTarget.style.background = t.accentHover}
-                onMouseLeave={e => e.currentTarget.style.background = t.accent}>
-                Sign In
-              </button>
+            {/* Mobile logo */}
+            <div className="lg:hidden text-center mb-8">
+              <h1 className="text-3xl font-bold text-indigo-600" style={{ fontFamily: "'Lora',serif" }}>✂ StitchFind</h1>
+              <p className="text-gray-500 text-sm mt-1">Your tailoring platform</p>
             </div>
-            <p style={{ textAlign: "center", fontSize: "13px", color: t.sub, marginTop: "24px" }}>
-              Don't have an account? <Link to="/" style={{ color: t.accent, fontWeight: 600, textDecoration: "none" }}>Sign up</Link>
-            </p>
+
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-7 sm:p-9">
+              <h2 className="text-2xl font-bold text-gray-900 mb-1" style={{ fontFamily: "'Lora',serif" }}>Welcome back</h2>
+              <p className="text-gray-500 text-sm mb-7">Sign in to your StitchFind account</p>
+
+              <div className="space-y-4">
+                {/* Email */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">Email Address</label>
+                  <input
+                    name="emailid" type="email" value={formData.emailid}
+                    onChange={handleChange} placeholder="you@example.com"
+                    className={`w-full px-4 py-3 rounded-xl border text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${errors.emailid ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}
+                  />
+                  {errors.emailid && <p className="text-red-500 text-xs mt-1 flex items-center gap-1">⚠ {errors.emailid}</p>}
+                </div>
+
+                {/* Password */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">Password</label>
+                  <input
+                    name="pwd" type="password" value={formData.pwd}
+                    onChange={handleChange} placeholder="••••••••"
+                    className={`w-full px-4 py-3 rounded-xl border text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${errors.pwd ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}
+                  />
+                  {errors.pwd && <p className="text-red-500 text-xs mt-1 flex items-center gap-1">⚠ {errors.pwd}</p>}
+                </div>
+
+                {/* Submit */}
+                <button
+                  onClick={handleLogin}
+                  disabled={loading}
+                  className="w-full py-3 bg-indigo-600 text-white rounded-xl font-semibold text-sm hover:bg-indigo-700 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
+                >
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                      </svg>
+                      Signing in...
+                    </>
+                  ) : "Sign In →"}
+                </button>
+              </div>
+
+              <p className="text-center text-sm text-gray-500 mt-6">
+                Don't have an account?{" "}
+                <Link to="/" className="text-indigo-600 font-semibold hover:underline">Sign up</Link>
+              </p>
+            </div>
           </div>
         </div>
       </div>
