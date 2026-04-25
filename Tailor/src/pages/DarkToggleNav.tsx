@@ -1,6 +1,3 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-
 interface Props {
   dark?: boolean;
   onToggle?: () => void;
@@ -9,7 +6,7 @@ interface Props {
 
 export const DarkToggleNav = ({ dark, onToggle, title }: Props) => {
   return (
-    <nav className={`sticky top-0 z-50 border-b flex items-center justify-between px-4 sm:px-6 h-14 ${dark ? "bg-[#1e150a] border-[#3d2e1e]" : "bg-white border-gray-100"} shadow-sm`}>
+    <nav className={`sticky top-0 z-50 border-b flex items-center justify-between px-4 sm:px-6 h-14 shadow-sm ${dark ? "bg-[#1e150a] border-[#3d2e1e]" : "bg-white border-gray-100"}`}>
       <span className={`font-semibold text-lg tracking-tight ${dark ? "text-[#fef3e2]" : "text-gray-900"}`} style={{ fontFamily: "'Lora',serif" }}>
         ✂ {title || "StitchFind"}
       </span>

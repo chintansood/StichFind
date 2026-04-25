@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 
@@ -34,13 +34,25 @@ export default function CustomerDashboard() {
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "26px 26px" }} />
         <div className="max-w-5xl mx-auto relative z-10">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+
             {/* Greeting */}
             <div>
               <span className="inline-block bg-white/10 text-white/80 text-xs font-semibold px-3 py-1 rounded-full border border-white/20 mb-4">👋 Welcome back</span>
               <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight" style={{ fontFamily: "'Lora',serif" }}>
-                {profile?.name ? <>Hello, <span className="text-yellow-300 italic">{profile.name}</span></> : <>Your <span className="text-yellow-300 italic">Dashboard</span></>}
+                {profile?.name
+                  ? <>Hello, <span className="text-yellow-300 italic">{profile.name}</span></>
+                  : <>Your <span className="text-yellow-300 italic">Dashboard</span></>}
               </h1>
-              <p className="text-indigo-100 text-sm mt-2 max-w-xs leading-relaxed">Find skilled tailors, write reviews, and manage your tailoring journey.</p>
+              <p className="text-indigo-100 text-sm mt-2 max-w-xs leading-relaxed">
+                Find skilled tailors, write reviews, and manage your tailoring journey.
+              </p>
+              {/* Logout button */}
+              <button
+                onClick={handleLogout}
+                className="mt-4 text-xs font-semibold px-4 py-1.5 rounded-lg bg-white/10 text-white/80 border border-white/20 hover:bg-white/20 transition-colors"
+              >
+                Logout
+              </button>
             </div>
 
             {/* Profile card */}
@@ -124,7 +136,9 @@ export default function CustomerDashboard() {
       <section className="py-12 px-4 text-center bg-indigo-600">
         <div className="text-4xl mb-4">✂️</div>
         <h2 className="text-2xl font-bold text-white mb-3" style={{ fontFamily: "'Lora',serif" }}>Ready to Find Your Tailor?</h2>
-        <p className="text-indigo-100 text-sm mb-7 max-w-sm mx-auto leading-relaxed">Browse verified professionals in your city and get the perfect fit every time.</p>
+        <p className="text-indigo-100 text-sm mb-7 max-w-sm mx-auto leading-relaxed">
+          Browse verified professionals in your city and get the perfect fit every time.
+        </p>
         <Link to="/find-tailor" className="inline-block px-8 py-3 bg-yellow-400 text-gray-900 font-bold rounded-xl hover:bg-yellow-300 transition-colors text-sm">
           Browse Tailors →
         </Link>
