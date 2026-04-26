@@ -21,265 +21,263 @@ const testimonials = [
   { name: "Anjali Singh", city: "Delhi", text: "Love that all tailors are verified. Felt safe and the work was excellent.", rating: 4, avatar: "👩‍🦱" },
 ];
 
-// ── Tailor Scene SVG Illustration ──
-const TailorIllustration = () => (
-  <svg viewBox="0 0 520 480" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-    <defs>
-      <style>{`
-        @keyframes floatA { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-10px)} }
-        @keyframes floatB { 0%,100%{transform:translateY(-6px)} 50%{transform:translateY(6px)} }
-        @keyframes floatC { 0%,100%{transform:translateY(-4px)} 50%{transform:translateY(8px)} }
-        @keyframes spin   { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-        @keyframes dash   { to{stroke-dashoffset:-40} }
-        .fa { animation: floatA 5s ease-in-out infinite; transform-origin: center; }
-        .fb { animation: floatB 6s ease-in-out infinite; transform-origin: center; }
-        .fc { animation: floatC 4s ease-in-out 0.5s infinite; transform-origin: center; }
-        .fd { animation: floatA 7s ease-in-out 1s infinite; transform-origin: center; }
-        .thread-anim { animation: dash 2s linear infinite; }
-      `}</style>
-    </defs>
+// ── Premium Tailor Card Visual ──
+const TailorCardPreview = () => (
+  <div className="relative w-full h-full flex items-center justify-center">
+    {/* Ambient glow layers */}
+    <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full opacity-30 blur-3xl" style={{ background: "radial-gradient(circle, #818cf8, transparent)" }} />
+    <div className="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full opacity-20 blur-3xl" style={{ background: "radial-gradient(circle, #fbbf24, transparent)" }} />
 
-    {/* ── Background circles (depth) ── */}
-    <circle cx="260" cy="240" r="210" fill="rgba(255,255,255,0.04)" />
-    <circle cx="260" cy="240" r="160" fill="rgba(255,255,255,0.04)" />
-    <circle cx="260" cy="240" r="110" fill="rgba(255,255,255,0.06)" />
+    {/* Main tailor profile card */}
+    <div className="relative z-10 flex flex-col gap-4 w-full max-w-sm">
 
-    {/* ── MANNEQUIN (center piece) ── */}
-    <g className="fa">
-      {/* Body */}
-      <ellipse cx="260" cy="310" rx="48" ry="70" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5"/>
-      {/* Neck */}
-      <rect x="251" y="238" width="18" height="20" rx="6" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5"/>
-      {/* Head */}
-      <circle cx="260" cy="225" r="18" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5"/>
-      {/* Stand pole */}
-      <rect x="257" y="378" width="6" height="48" rx="3" fill="rgba(255,255,255,0.3)"/>
-      {/* Base */}
-      <ellipse cx="260" cy="428" rx="28" ry="7" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-      {/* Shirt lines on mannequin */}
-      <path d="M230 280 Q260 270 290 280" stroke="rgba(255,255,255,0.35)" strokeWidth="1" fill="none" strokeDasharray="3,3"/>
-      <path d="M225 300 Q260 290 295 300" stroke="rgba(255,255,255,0.35)" strokeWidth="1" fill="none" strokeDasharray="3,3"/>
-      <path d="M227 320 Q260 310 293 320" stroke="rgba(255,255,255,0.35)" strokeWidth="1" fill="none" strokeDasharray="3,3"/>
-      {/* Shoulder seam marks */}
-      <line x1="214" y1="268" x2="230" y2="272" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="306" y1="268" x2="290" y2="272" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round"/>
-    </g>
+      {/* ── Floating badge — top right ── */}
+      <div
+        className="absolute -top-4 -right-4 z-20 flex items-center gap-2 bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg shadow-emerald-500/40"
+        style={{ animation: "floatUp 4s ease-in-out infinite" }}
+      >
+        <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+        Aadhaar Verified
+      </div>
 
-    {/* ── SCISSORS (top left) ── */}
-    <g className="fb" style={{ transformOrigin: "110px 120px" }}>
-      {/* Handle 1 */}
-      <ellipse cx="95" cy="108" rx="14" ry="9" fill="rgba(255,215,0,0.25)" stroke="rgba(255,215,0,0.8)" strokeWidth="1.5" transform="rotate(-35 95 108)"/>
-      {/* Handle 2 */}
-      <ellipse cx="125" cy="135" rx="14" ry="9" fill="rgba(255,215,0,0.25)" stroke="rgba(255,215,0,0.8)" strokeWidth="1.5" transform="rotate(-35 125 135)"/>
-      {/* Pivot */}
-      <circle cx="110" cy="122" r="4" fill="rgba(255,215,0,0.9)" stroke="rgba(255,215,0,1)" strokeWidth="1"/>
-      {/* Blade 1 */}
-      <path d="M110 122 L158 80" stroke="rgba(255,255,255,0.9)" strokeWidth="2" strokeLinecap="round"/>
-      {/* Blade 2 */}
-      <path d="M110 122 L162 98" stroke="rgba(255,255,255,0.9)" strokeWidth="2" strokeLinecap="round"/>
-      {/* Blade tips sparkle */}
-      <circle cx="158" cy="80" r="2.5" fill="rgba(255,255,255,0.9)"/>
-      <circle cx="162" cy="98" r="2.5" fill="rgba(255,255,255,0.9)"/>
-    </g>
+      {/* Main card */}
+      <div
+        className="bg-white rounded-2xl shadow-2xl shadow-indigo-900/20 overflow-hidden border border-gray-100"
+        style={{ animation: "floatUp 5s ease-in-out 0.3s infinite" }}
+      >
+        {/* Card header */}
+        <div className="px-5 pt-5 pb-4 flex items-center gap-4">
+          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center text-2xl flex-shrink-0 shadow-sm">
+            ✂️
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between mb-0.5">
+              <p className="font-bold text-gray-900 text-base leading-tight">Rajan Kumar</p>
+              <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">₹300/suit</span>
+            </div>
+            <p className="text-gray-400 text-xs flex items-center gap-1">
+              <span>📍</span> Ludhiana, Punjab
+            </p>
+            <div className="flex items-center gap-1 mt-1">
+              {[1,2,3,4,5].map(i => (
+                <svg key={i} className="w-3 h-3 text-amber-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              ))}
+              <span className="text-xs text-gray-500 ml-1">5.0 · 128 reviews</span>
+            </div>
+          </div>
+        </div>
 
-    {/* ── MEASURING TAPE (bottom left) ── */}
-    <g className="fc" style={{ transformOrigin: "100px 380px" }}>
-      <rect x="72" y="362" width="56" height="22" rx="11" fill="rgba(255,215,0,0.2)" stroke="rgba(255,215,0,0.7)" strokeWidth="1.5"/>
-      {/* Tape strip */}
-      <path d="M128 373 Q180 340 230 360 Q270 375 300 355" stroke="rgba(255,215,0,0.8)" strokeWidth="3" fill="none" strokeLinecap="round"/>
-      {/* Tick marks on tape */}
-      {[0,1,2,3,4,5,6].map(i => (
-        <line key={i}
-          x1={135 + i * 24} y1={370 - i * 2.5}
-          x2={135 + i * 24} y2={363 - i * 2.5}
-          stroke="rgba(255,215,0,0.6)" strokeWidth="1"/>
-      ))}
-      <text x="88" y="378" fontSize="9" fill="rgba(255,215,0,0.9)" textAnchor="middle" fontFamily="monospace">cm</text>
-    </g>
+        {/* Divider */}
+        <div className="h-px bg-gray-100 mx-5" />
 
-    {/* ── NEEDLE & THREAD (top right) ── */}
-    <g className="fd" style={{ transformOrigin: "400px 130px" }}>
-      {/* Needle */}
-      <rect x="386" y="88" width="5" height="62" rx="2.5" fill="rgba(255,255,255,0.85)" transform="rotate(20 386 88)"/>
-      {/* Eye of needle */}
-      <ellipse cx="392" cy="93" rx="3" ry="5" fill="none" stroke="rgba(100,149,237,0.9)" strokeWidth="1.5" transform="rotate(20 392 93)"/>
-      {/* Thread */}
-      <path
-        d="M392 93 Q420 110 410 145 Q400 175 430 190 Q455 205 440 235 Q425 260 450 275"
-        stroke="rgba(99,102,241,0.85)" strokeWidth="2" fill="none"
-        strokeDasharray="6,4" strokeLinecap="round"
-        className="thread-anim"
-        style={{ strokeDashoffset: 0 }}
-      />
-      {/* Thread spool */}
-      <ellipse cx="456" cy="278" rx="14" ry="10" fill="rgba(99,102,241,0.3)" stroke="rgba(99,102,241,0.7)" strokeWidth="1.5"/>
-      <ellipse cx="456" cy="278" rx="8" ry="6" fill="rgba(99,102,241,0.5)" stroke="rgba(99,102,241,0.8)" strokeWidth="1"/>
-      <line x1="442" y1="278" x2="470" y2="278" stroke="rgba(99,102,241,0.7)" strokeWidth="1.5"/>
-    </g>
+        {/* Specialties */}
+        <div className="px-5 py-3 flex flex-wrap gap-2">
+          {["Men's Suits", "Sherwani", "Alterations"].map(tag => (
+            <span key={tag} className="text-xs font-medium text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-100">{tag}</span>
+          ))}
+          <span className="text-xs font-medium text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-100">🏠 Home Visits</span>
+        </div>
 
-    {/* ── FABRIC SWATCHES (bottom right) ── */}
-    <g className="fb" style={{ transformOrigin: "410px 370px" }}>
-      {/* Swatch 1 — deep indigo */}
-      <rect x="370" y="345" width="55" height="65" rx="6" fill="rgba(79,70,229,0.5)" stroke="rgba(99,102,241,0.8)" strokeWidth="1.5"/>
-      {/* Plaid lines */}
-      {[0,1,2,3].map(i => (
-        <line key={i} x1="370" y1={355 + i*14} x2="425" y2={355 + i*14} stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
-      ))}
-      {[0,1,2,3].map(i => (
-        <line key={i} x1={380 + i*14} y1="345" x2={380 + i*14} y2="410" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
-      ))}
+        {/* CTA strip */}
+        <div className="px-5 pb-5">
+          <div className="flex items-center justify-between bg-indigo-600 rounded-xl px-4 py-2.5 cursor-pointer hover:bg-indigo-700 transition-colors">
+            <span className="text-white text-sm font-semibold">View Profile</span>
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </div>
+        </div>
+      </div>
 
-      {/* Swatch 2 — gold */}
-      <rect x="405" y="358" width="55" height="65" rx="6" fill="rgba(202,138,4,0.4)" stroke="rgba(255,215,0,0.7)" strokeWidth="1.5"/>
-      {/* Diagonal pattern */}
-      {[0,1,2,3,4].map(i => (
-        <line key={i} x1={405 + i*14} y1="358" x2="405" y2={358 + i*14} stroke="rgba(255,255,255,0.12)" strokeWidth="1"/>
-      ))}
+      {/* ── Mini card — new review ── */}
+      <div
+        className="bg-white rounded-xl shadow-lg shadow-indigo-900/10 px-4 py-3 flex items-center gap-3 border border-gray-100 self-end w-fit"
+        style={{ animation: "floatUp 6s ease-in-out 1s infinite" }}
+      >
+        <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-base flex-shrink-0">👩</div>
+        <div>
+          <p className="text-gray-800 text-xs font-semibold">Priya gave 5 stars ★</p>
+          <p className="text-gray-400 text-[10px] mt-0.5">"Lehenga was absolutely perfect!"</p>
+        </div>
+        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 ml-1 flex-shrink-0 animate-pulse" />
+      </div>
 
-      {/* Swatch 3 — white */}
-      <rect x="390" y="375" width="55" height="55" rx="6" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5"/>
-
-      {/* Fold corner on top swatch */}
-      <path d="M415 345 L425 345 L415 358 Z" fill="rgba(255,255,255,0.3)"/>
-    </g>
-
-    {/* ── FLOATING UI CARD — Tailor profile ── */}
-    <g className="fa" style={{ transformOrigin: "80px 240px" }}>
-      <rect x="18" y="210" width="148" height="78" rx="14" fill="rgba(255,255,255,0.95)" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-      {/* Avatar */}
-      <circle cx="44" cy="240" r="14" fill="#e0e7ff"/>
-      <text x="44" y="245" fontSize="14" textAnchor="middle" fill="#4f46e5">✂</text>
-      {/* Name */}
-      <text x="64" y="233" fontSize="11" fontWeight="600" fill="#1e1b4b" fontFamily="Inter,sans-serif">Rajan Tailor</text>
-      <text x="64" y="246" fontSize="9" fill="#6b7280" fontFamily="Inter,sans-serif">📍 Ludhiana, Punjab</text>
-      {/* Stars */}
-      <text x="64" y="259" fontSize="10" fill="#f59e0b" fontFamily="Inter,sans-serif">★★★★★</text>
-      <text x="110" y="259" fontSize="9" fill="#9ca3af" fontFamily="Inter,sans-serif">5.0</text>
-      {/* Badges */}
-      <rect x="20" y="268" width="30" height="13" rx="6" fill="#e0e7ff"/>
-      <text x="35" y="278" fontSize="8" textAnchor="middle" fill="#4f46e5" fontFamily="Inter,sans-serif">Men</text>
-      <rect x="54" y="268" width="36" height="13" rx="6" fill="#fef3c7"/>
-      <text x="72" y="278" fontSize="8" textAnchor="middle" fill="#92400e" fontFamily="Inter,sans-serif">Bridal</text>
-      <rect x="94" y="268" width="34" height="13" rx="6" fill="#d1fae5"/>
-      <text x="111" y="278" fontSize="8" textAnchor="middle" fill="#065f46" fontFamily="Inter,sans-serif">Suits</text>
-    </g>
-
-    {/* ── FLOATING UI CARD — Verified badge ── */}
-    <g className="fc" style={{ transformOrigin: "390px 195px" }}>
-      <rect x="340" y="168" width="110" height="54" rx="14" fill="rgba(34,197,94,0.9)" stroke="rgba(255,255,255,0.3)" strokeWidth="1"/>
-      <text x="395" y="193" fontSize="20" textAnchor="middle" fill="white">✓</text>
-      <text x="395" y="210" fontSize="10" fontWeight="600" textAnchor="middle" fill="white" fontFamily="Inter,sans-serif">Aadhaar Verified</text>
-    </g>
-
-    {/* ── FLOATING UI CARD — New booking ── */}
-    <g className="fb" style={{ transformOrigin: "400px 70px" }}>
-      <rect x="330" y="42" width="148" height="56" rx="14" fill="rgba(255,255,255,0.95)" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-      <circle cx="352" cy="64" r="8" fill="#ede9fe"/>
-      <text x="352" y="68" fontSize="10" textAnchor="middle" fill="#7c3aed">★</text>
-      <text x="368" y="60" fontSize="10" fontWeight="600" fill="#1e1b4b" fontFamily="Inter,sans-serif">New Review!</text>
-      <text x="368" y="72" fontSize="9" fill="#6b7280" fontFamily="Inter,sans-serif">Priya rated 5 stars</text>
-      <text x="368" y="88" fontSize="8" fill="#10b981" fontFamily="Inter,sans-serif">● Just now</text>
-    </g>
-
-    {/* ── PINS / stitch dots decorative ── */}
-    {[[155, 165], [175, 155], [195, 162], [215, 158]].map(([x, y], i) => (
-      <g key={i}>
-        <circle cx={x} cy={y} r="2.5" fill="rgba(255,215,0,0.8)"/>
-        <line x1={x} y1={y} x2={x - 2} y2={y + 10} stroke="rgba(255,255,255,0.5)" strokeWidth="1" strokeLinecap="round"/>
-      </g>
-    ))}
-
-    {/* ── Floating sparkles ── */}
-    {[[350, 140, 0], [130, 320, 1], [290, 150, 0.5], [170, 390, 1.5]].map(([x, y, d], i) => (
-      <g key={i} style={{ animation: `floatA ${3 + i * 0.7}s ease-in-out ${d}s infinite`, transformOrigin: `${x}px ${y}px` }}>
-        <circle cx={x} cy={y} r="3" fill="rgba(255,255,255,0.4)"/>
-      </g>
-    ))}
-  </svg>
+      {/* ── Search bar card ── */}
+      <div
+        className="bg-white rounded-xl shadow-lg shadow-indigo-900/10 px-4 py-3 flex items-center gap-3 border border-gray-100 self-start"
+        style={{ animation: "floatUp 4.5s ease-in-out 0.7s infinite" }}
+      >
+        <svg className="w-4 h-4 text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <div>
+          <p className="text-gray-800 text-xs font-semibold">Chandigarh</p>
+          <p className="text-gray-400 text-[10px]">12 tailors found nearby</p>
+        </div>
+      </div>
+    </div>
+  </div>
 );
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter',sans-serif" }}>
+    <div className="min-h-screen bg-white" style={{ fontFamily: "'DM Sans',sans-serif" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,500&family=Inter:wght@300;400;500;600;700&display=swap');
-        .hero-gradient { background: linear-gradient(135deg, #1e1b4b 0%, #3730a3 40%, #4f46e5 70%, #6366f1 100%); }
+        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+        .hero-bg {
+          background: linear-gradient(150deg, #0f0c29 0%, #1a1760 35%, #312e81 65%, #3730a3 100%);
+        }
+        .noise-overlay {
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+        }
+        @keyframes floatUp {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-8px); }
+        }
+        @keyframes fadeSlideUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .anim-1 { animation: fadeSlideUp 0.6s ease both; }
+        .anim-2 { animation: fadeSlideUp 0.6s 0.12s ease both; }
+        .anim-3 { animation: fadeSlideUp 0.6s 0.24s ease both; }
+        .anim-4 { animation: fadeSlideUp 0.6s 0.36s ease both; }
+        .anim-5 { animation: fadeSlideUp 0.6s 0.48s ease both; }
+
+        .btn-primary {
+          background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+          box-shadow: 0 8px 32px rgba(251,191,36,0.35), 0 2px 8px rgba(251,191,36,0.2);
+          transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+          transform: translateY(-2px) scale(1.02);
+          box-shadow: 0 16px 40px rgba(251,191,36,0.45), 0 4px 12px rgba(251,191,36,0.25);
+        }
+        .btn-primary:active { transform: translateY(0) scale(0.99); }
+
+        .btn-secondary {
+          background: rgba(255,255,255,0.08);
+          border: 1.5px solid rgba(255,255,255,0.18);
+          backdrop-filter: blur(8px);
+          transition: all 0.2s ease;
+        }
+        .btn-secondary:hover {
+          background: rgba(255,255,255,0.14);
+          transform: translateY(-2px);
+        }
+
+        .stat-item { border-right: 1px solid rgba(255,255,255,0.1); }
+        .stat-item:last-child { border-right: none; }
+
         .card-hover { transition: all 0.25s ease; }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
-        .btn-shine { position: relative; overflow: hidden; }
-        .btn-shine::after { content:''; position:absolute; top:-50%; left:-60%; width:40%; height:200%; background:rgba(255,255,255,0.15); transform:skewX(-20deg); transition:left 0.5s; }
-        .btn-shine:hover::after { left:120%; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.10); }
+
+        .hero-grid-dots {
+          background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px);
+          background-size: 28px 28px;
+        }
       `}</style>
 
-      {/* ── HERO ── */}
-      <section className="hero-gradient min-h-screen flex items-center relative overflow-hidden">
-        {/* Glow blobs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full" style={{ background: "rgba(139,92,246,0.2)", filter: "blur(80px)" }} />
-          <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full" style={{ background: "rgba(59,130,246,0.15)", filter: "blur(80px)" }} />
-          <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
-        </div>
+      {/* ══════════════════ HERO ══════════════════ */}
+      <section className="hero-bg relative overflow-hidden">
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10 w-full">
-          <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[85vh]">
+        {/* Noise texture */}
+        <div className="absolute inset-0 noise-overlay pointer-events-none opacity-60" />
 
-            {/* Left — text */}
-            <div className="flex flex-col justify-center">
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-8 w-fit">
-                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                <span className="text-white/90 text-sm font-medium">500+ Verified Tailors Across India</span>
+        {/* Dot grid */}
+        <div className="absolute inset-0 hero-grid-dots pointer-events-none" />
+
+        {/* Glow orbs */}
+        <div className="absolute top-0 right-0 w-[700px] h-[700px] rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle at 70% 20%, rgba(99,102,241,0.25) 0%, transparent 65%)" }} />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle at 30% 80%, rgba(79,70,229,0.18) 0%, transparent 65%)" }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle, rgba(67,56,202,0.12) 0%, transparent 70%)" }} />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 pt-20 pb-0">
+
+          {/* Content grid */}
+          <div className="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center min-h-[88vh]">
+
+            {/* ── LEFT: Copy ── */}
+            <div className="flex flex-col justify-center py-16 lg:py-0">
+
+              {/* Trust pill */}
+              <div className="anim-1 inline-flex items-center gap-2 w-fit mb-8 px-4 py-2 rounded-full border border-white/15 bg-white/[0.06] backdrop-blur-sm">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+                </span>
+                <span className="text-white/80 text-sm font-medium tracking-tight">500+ Verified Tailors Across India</span>
               </div>
 
-              <h1 className="text-5xl sm:text-6xl lg:text-[68px] font-bold text-white leading-[1.05] mb-6" style={{ fontFamily: "'Lora',serif" }}>
-                Find Your
-                <span className="block italic text-yellow-300 drop-shadow-lg">Perfect Tailor</span>
-                <span className="block text-3xl sm:text-4xl font-normal text-white/60 mt-3">Near You, Instantly</span>
+              {/* Headline */}
+              <h1 className="anim-2 mb-6" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                <span className="block text-5xl sm:text-6xl lg:text-[64px] xl:text-[72px] leading-[1.06] text-white tracking-tight">
+                  Find Skilled Tailors
+                </span>
+                <span className="block text-5xl sm:text-6xl lg:text-[64px] xl:text-[72px] leading-[1.06] italic text-amber-300 tracking-tight">
+                  Near You, Instantly
+                </span>
               </h1>
 
-              <p className="text-lg text-indigo-100 leading-relaxed mb-10 max-w-md">
-                Discover trusted local tailors, compare profiles and ratings, and connect instantly — no booking fees, ever.
+              {/* Subtext */}
+              <p className="anim-3 text-indigo-200/80 text-lg sm:text-xl leading-relaxed mb-10 max-w-lg font-light">
+                Discover trusted local tailors, read genuine reviews, and connect&nbsp;directly —
+                <span className="text-white font-medium"> no booking fees, ever.</span>
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 mb-12">
-                <Link to="/find-tailor"
-                  className="btn-shine group inline-flex items-center justify-center gap-2 px-8 py-4 bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold rounded-2xl text-base transition-all shadow-2xl shadow-yellow-400/40">
+              {/* CTA buttons */}
+              <div className="anim-4 flex flex-col sm:flex-row gap-3 mb-12">
+                <Link
+                  to="/find-tailor"
+                  className="btn-primary group inline-flex items-center justify-center gap-2.5 px-8 py-4 text-gray-900 font-bold rounded-2xl text-[15px]"
+                >
                   Find Tailors Now
-                  <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </Link>
-                <Link to="/signup"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold rounded-2xl text-base border border-white/25 transition-all">
-                  Join as Tailor ✂
+                <Link
+                  to="/signup"
+                  className="btn-secondary inline-flex items-center justify-center gap-2 px-8 py-4 text-white font-semibold rounded-2xl text-[15px]"
+                >
+                  <span>✂</span> Join as Tailor
                 </Link>
               </div>
 
-              {/* Stats */}
-              <div className="flex flex-wrap gap-8 pt-6 border-t border-white/10">
-                {[["500+", "Verified Tailors"], ["8", "Cities"], ["2000+", "Happy Customers"], ["4.8★", "Avg Rating"]].map(([num, label]) => (
-                  <div key={label}>
-                    <div className="text-2xl font-bold text-yellow-300" style={{ fontFamily: "'Lora',serif" }}>{num}</div>
-                    <div className="text-xs text-indigo-300 mt-0.5 uppercase tracking-wider">{label}</div>
+              {/* Stats row */}
+              <div className="anim-5 flex divide-x divide-white/10">
+                {[
+                  { num: "500+", label: "Verified Tailors", icon: "✂️" },
+                  { num: "8", label: "Cities", icon: "📍" },
+                  { num: "2,000+", label: "Happy Customers", icon: "❤️" },
+                  { num: "4.8★", label: "Avg Rating", icon: "⭐" },
+                ].map(({ num, label, icon }) => (
+                  <div key={label} className="flex-1 first:pl-0 pl-6 pr-6 last:pr-0">
+                    <div className="text-xl sm:text-2xl font-bold text-white mb-0.5" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                      {num}
+                    </div>
+                    <div className="text-indigo-300/70 text-[11px] sm:text-xs font-medium uppercase tracking-wider leading-tight">{label}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Right — custom illustration */}
-            <div className="hidden lg:flex items-center justify-center relative h-[520px]">
-              {/* Soft glow behind illustration */}
-              <div className="absolute inset-0 rounded-full scale-75" style={{ background: "rgba(99,102,241,0.2)", filter: "blur(60px)" }} />
-              <div className="relative w-full h-full">
-                <TailorIllustration />
-              </div>
+            {/* ── RIGHT: Card preview ── */}
+            <div className="hidden lg:flex items-end justify-center relative pb-0" style={{ minHeight: "520px" }}>
+              <TailorCardPreview />
             </div>
           </div>
         </div>
 
         {/* Bottom wave */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
-            <path d="M0 80L1440 80L1440 40C1440 40 1080 0 720 0C360 0 0 40 0 40L0 80Z" fill="white" />
+        <div className="relative z-10">
+          <svg viewBox="0 0 1440 72" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block">
+            <path d="M0 72L1440 72L1440 32C1300 8 1080 0 720 0C360 0 140 8 0 32L0 72Z" fill="white" />
           </svg>
         </div>
       </section>
@@ -301,7 +299,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold text-indigo-600 uppercase tracking-widest bg-indigo-50 px-4 py-2 rounded-full mb-4">How It Works</span>
-            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900" style={{ fontFamily: "'Lora',serif" }}>
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900" style={{ fontFamily: "'DM Serif Display',serif" }}>
               Get stitched in
               <span className="block italic text-indigo-600 mt-1">3 simple steps</span>
             </h2>
@@ -310,9 +308,9 @@ export default function Home() {
             {steps.map(({ step, title, desc }) => (
               <div key={step} className="text-center group card-hover bg-gray-50 rounded-3xl p-8 border border-gray-100">
                 <div className="w-20 h-20 rounded-2xl bg-indigo-600 text-white flex items-center justify-center mx-auto mb-6 shadow-lg shadow-indigo-200 group-hover:scale-110 group-hover:bg-indigo-700 transition-all duration-300">
-                  <span className="text-3xl font-bold" style={{ fontFamily: "'Lora',serif" }}>{step}</span>
+                  <span className="text-3xl font-bold" style={{ fontFamily: "'DM Serif Display',serif" }}>{step}</span>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora',serif" }}>{title}</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'DM Serif Display',serif" }}>{title}</h3>
                 <p className="text-gray-500 leading-relaxed text-sm">{desc}</p>
               </div>
             ))}
@@ -325,7 +323,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold text-indigo-600 uppercase tracking-widest bg-indigo-50 px-4 py-2 rounded-full mb-4">Why StitchFind</span>
-            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900" style={{ fontFamily: "'Lora',serif" }}>
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900" style={{ fontFamily: "'DM Serif Display',serif" }}>
               Everything you need,
               <span className="block italic text-indigo-600 mt-1">nothing you don't</span>
             </h2>
@@ -334,7 +332,7 @@ export default function Home() {
             {features.map(({ icon, title, desc }) => (
               <div key={title} className="card-hover bg-white rounded-3xl p-8 border border-gray-100 shadow-sm group cursor-default">
                 <div className="w-14 h-14 rounded-2xl bg-indigo-50 group-hover:bg-indigo-100 flex items-center justify-center text-2xl mb-6 transition-colors duration-300">{icon}</div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora',serif" }}>{title}</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-3" style={{ fontFamily: "'DM Serif Display',serif" }}>{title}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
               </div>
             ))}
@@ -347,7 +345,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold text-indigo-600 uppercase tracking-widest bg-indigo-50 px-4 py-2 rounded-full mb-4">Customer Stories</span>
-            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900" style={{ fontFamily: "'Lora',serif" }}>
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900" style={{ fontFamily: "'DM Serif Display',serif" }}>
               Loved by customers
               <span className="block italic text-indigo-600 mt-1">across India</span>
             </h2>
@@ -373,21 +371,21 @@ export default function Home() {
       </section>
 
       {/* ── TAILOR CTA ── */}
-      <section className="py-20 sm:py-28 hero-gradient relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+      <section className="py-20 sm:py-28 hero-bg relative overflow-hidden">
+        <div className="absolute inset-0 hero-grid-dots opacity-50 pointer-events-none" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6" style={{ fontFamily: "'Lora',serif" }}>
+          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6" style={{ fontFamily: "'DM Serif Display',serif" }}>
             Are you a Tailor?
-            <span className="block italic text-yellow-300 mt-2">Grow your business with us</span>
+            <span className="block italic text-amber-300 mt-2">Grow your business with us</span>
           </h2>
-          <p className="text-indigo-100 text-lg leading-relaxed mb-10 max-w-xl mx-auto">
+          <p className="text-indigo-200/80 text-lg leading-relaxed mb-10 max-w-xl mx-auto">
             Join 500+ tailors already on StitchFind. Create your free profile and get discovered by thousands of customers.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/signup" className="btn-shine inline-flex items-center justify-center gap-2 px-10 py-4 bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold rounded-2xl text-base transition-all shadow-2xl shadow-yellow-400/30">
+            <Link to="/signup" className="btn-primary inline-flex items-center justify-center gap-2 px-10 py-4 text-gray-900 font-bold rounded-2xl text-base">
               Create Free Profile →
             </Link>
-            <Link to="/login" className="inline-flex items-center justify-center px-10 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-2xl border border-white/25 transition-all">
+            <Link to="/login" className="btn-secondary inline-flex items-center justify-center px-10 py-4 text-white font-semibold rounded-2xl text-base">
               Already a member? Login
             </Link>
           </div>
@@ -399,7 +397,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 mb-10">
             <div>
-              <p className="text-2xl font-bold text-white mb-3" style={{ fontFamily: "'Lora',serif" }}>✂ StitchFind</p>
+              <p className="text-2xl font-bold text-white mb-3" style={{ fontFamily: "'DM Serif Display',serif" }}>✂ StitchFind</p>
               <p className="text-gray-400 text-sm leading-relaxed max-w-xs">India's most trusted platform for finding verified, skilled tailors near you.</p>
             </div>
             <div>
