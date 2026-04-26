@@ -256,7 +256,7 @@ export default function Home() {
                   { num: "8", label: "Cities", icon: "📍" },
                   { num: "2,000+", label: "Happy Customers", icon: "❤️" },
                   { num: "4.8★", label: "Avg Rating", icon: "⭐" },
-                ].map(({ num, label, icon }) => (
+                ].map(({ num, label }) => (
                   <div key={label} className="flex-1 first:pl-0 pl-6 pr-6 last:pr-0">
                     <div className="text-xl sm:text-2xl font-bold text-white mb-0.5" style={{ fontFamily: "'DM Serif Display', serif" }}>
                       {num}
